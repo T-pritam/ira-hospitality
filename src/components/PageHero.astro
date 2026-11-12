@@ -1,22 +1,21 @@
 ---
-import Dodeca from './Dodeca.astro';
 import Icon from './Icon.astro';
 interface Crumb { label: string; href?: string }
 interface Props {
   crumbs: Crumb[];
+  /** Kept for callers; the page hero is always light now. */
   theme?: 'dark' | 'light';
   cue?: { label: string; href: string };
   id?: string;
 }
-const { crumbs, theme = 'light', cue, id } = Astro.props;
-const color = theme === 'dark' ? 'rgba(255,255,255,0.28)' : 'rgba(0,0,0,0.2)';
+const { crumbs, cue, id } = Astro.props;
 ---
-<section class={`page-hero hairlines theme-${theme}`} data-theme-section={theme} id={id}>
-  <Dodeca class="page-hero__canvas" color={color} drift={12} />
+<section class="page-hero theme-light" data-theme-section="light" id={id}>
+  <div class="aurora" aria-hidden="true" data-aurora><i></i><i></i><i></i></div>
   <div class="container page-hero__inner">
-    <nav aria-label="Breadcrumb">
-      <ol class="breadcrumb" role="list" data-intro>
-        <li><a href="/">Homepage</a></li>
+    <nav aria-label="Breadcrumb" data-intro>
+      <ol class="breadcrumb glass" role="list">
+        <li><a href="/">Home</a></li>
         {crumbs.map((c) => (
           <>
             <li aria-hidden="true">/</li>
@@ -29,7 +28,7 @@ const color = theme === 'dark' ? 'rgba(255,255,255,0.28)' : 'rgba(0,0,0,0.2)';
     <div class="page-hero__foot">
       <div class="lead" data-intro><slot name="lead" /></div>
       {cue && (
-        <a href={cue.href} class="scroll-cue" data-intro>
+        <a href={cue.href} class="scroll-cue glass" data-intro>
           <span class="scroll-cue__circle"><Icon name="arrow-down" /></span>{cue.label}
         </a>
       )}

@@ -11,7 +11,9 @@ Rebuild irahospitality.co.in from scratch. The agency told the client the new si
 - **Content rules:** wording may be tightened, but names, titles, clients, quotes and contact details stay accurate. Never invent facts, clients, testimonials, numbers or awards.
 
 ## Status (12 Nov 2026)
-- Complete and pushed to `main`. 80 static pages.
+- **Visual redesign (v2) done on branch `ccr-f3b7c7c5-v9n8zg`.** The first build looked too close to the old site (same black hero, dodecahedrons, button, rail label), so the agency asked for an original look: Apple-like clear white, glassmorphism, more GSAP scroll motion, same content and flow. See "Design direction" in `CLAUDE.md`.
+- v2 verified: 80 pages build, 0 broken links, no console errors, no horizontal overflow at 390 px, reduced-motion shows everything. Lighthouse mobile (home): 97 / 97 / 100 / 100; the accessibility flag is only the scroll-scrubbed statement sampled mid-animation.
+- v1 (below) is complete and on `main`. 80 static pages.
 - Verified: 0 broken internal links (`node scripts/check-links.mjs`) and no console errors on any page type. Tested at 1280, 820 and 390 px with no horizontal overflow.
 - Lighthouse on the production build:
   - Home, desktop: 100 / 100 / 100 / 100.
@@ -29,9 +31,13 @@ Rebuild irahospitality.co.in from scratch. The agency told the client the new si
 | Logo kept as the original PNG (trimmed) | A potrace vectorisation was tried and rejected because it broke the thin hairline of the "R" and the HOSPITALITY lettering. |
 | Careers "experience" section is required | Mirrors the old site's code, which the backend may expect. Open question for the client: freshers roles. |
 | Both emails kept where they were | studio@ for contact and footer, info@ for Privacy and Terms (as on the old site). |
-| Wireframe dodecahedron is drawn on a 2D canvas | Keeps the brand motif without the weight of Three.js. |
-| Desktop gets an inline nav plus a "Let's talk" CTA; mobile keeps the full-screen menu | Clearer navigation. The menu keeps the old overlay's content (useful links, contact info). |
-| Vertical page label (bottom-left) and "Back to top" (bottom-right) | Kept from the old site as a signature, shown on 1280 px and up only. |
+| v2: dodecahedron, hairlines, rail label, circular scroll badge and the orange-pill-with-black-disc button removed | They were the old site's signatures; the agency wants a look that is clearly not the old site. |
+| v2: home hero shows a fan of five real project images plus a glass dock of the four services | Shows the work immediately; uses only existing assets and service names. |
+| v2: hero chip reads "Headquartered in Hyderabad, India · Operating globally" | The client's own line (it also remains in the founders section). |
+| v2: gold logo used everywhere (grey variant no longer used) | Gold reads well on the light canvas and on glass. |
+| v2: pages that end with a CtaBand hide the footer's "Let's talk" tile | Avoids two large calls to action in a row. |
+| Desktop gets an inline nav plus a "Let's talk" CTA in a floating glass bar; mobile opens a frosted full-screen menu | Clearer navigation. The menu keeps the old overlay's content (useful links, contact info). |
+| "Back to top" is a small glass button (bottom-right) | The vertical page label from the old site was dropped in v2. |
 | No invented copy | Section intros are either the client's own lines or neutral UI text. |
 
 ## Backend facts (found in the old site's JS bundle)

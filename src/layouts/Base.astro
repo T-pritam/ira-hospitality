@@ -17,21 +17,21 @@ interface Props {
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
   /** Theme of the first section, so the header starts in the right colour */
   headerTheme?: 'dark' | 'light';
-  /** Vertical page label at bottom-left (signature of the original site) */
+  /** Page label (kept for callers; no longer rendered) */
   label?: string;
   preloader?: boolean;
   /** Hide the big "Let's talk" block in the footer (pages that already end with a contact form) */
   footerCta?: boolean;
 }
-const { title, description, image, noindex, jsonLd, headerTheme = 'dark', label, preloader = false, footerCta = true } = Astro.props;
+const { title, description, image, noindex, jsonLd, headerTheme = 'light', preloader = false, footerCta = true } = Astro.props;
 ---
 <!doctype html>
 <html lang="en-IN">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta name="color-scheme" content="dark light" />
+    <meta name="theme-color" content="#fbfbfd" />
+    <meta name="color-scheme" content="light" />
     <link rel="preload" href={interLatin} as="font" type="font/woff2" crossorigin />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
@@ -63,11 +63,7 @@ const { title, description, image, noindex, jsonLd, headerTheme = 'dark', label,
       <slot />
     </main>
     <Footer cta={footerCta} />
-    {label && <div class="rail-label" aria-hidden="true">{label}</div>}
-    <a href="#main" class="to-top" data-to-top aria-label="Back to top">
-      <span class="to-top__circle"><Icon name="arrow-up" size={16} /></span>
-      <span class="to-top__text">Back to top</span>
-    </a>
+    <a href="#main" class="to-top glass" data-to-top aria-label="Back to top"><Icon name="arrow-up" /></a>
     <script>
       import '../scripts/main';
     </script>

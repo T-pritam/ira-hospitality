@@ -1,15 +1,17 @@
 ---
 import Button from './Button.astro';
 interface Props { intro?: string; theme?: 'soft' | 'dark' | 'light' }
-const { intro = 'Looking to make your mark? We’ll help you turn your project into a success story.', theme = 'soft' } = Astro.props;
-const sectionTheme = theme === 'dark' ? 'dark' : 'light';
+const { intro = 'Looking to make your mark? We’ll help you turn your project into a success story.' } = Astro.props;
 ---
-<section class={`section cta-band theme-${theme}`} data-theme-section={sectionTheme}>
-  <div class="container cta-band__grid">
-    <h2 class="h2" data-split><slot /></h2>
-    <div class="cta-band__aside" data-reveal>
-      <p>{intro}</p>
-      <Button href="/contact/">Contact us</Button>
+<section class="cta-band" data-theme-section="light">
+  <div class="container">
+    <div class="cta-band__grid theme-soft" data-clip>
+      <div class="aurora aurora--low" aria-hidden="true"><i></i><i></i><i></i></div>
+      <h2 class="h2" data-split><slot /></h2>
+      <div class="cta-band__aside" data-reveal>
+        <p>{intro}</p>
+        <Button href="/contact/">Contact us</Button>
+      </div>
     </div>
   </div>
 </section>

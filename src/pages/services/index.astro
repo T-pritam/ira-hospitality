@@ -20,23 +20,24 @@ const jsonLd = services.map((s) => ({
 <Base
   title="Our Services"
   description="Hospitality consulting, branding & marketing, operations & management and digital solutions for hotels, restaurants, bars, BnBs and cloud kitchens."
-  headerTheme="dark"
+  headerTheme="light"
   label="Services"
+  footerCta={false}
   jsonLd={jsonLd}
 >
-  <PageHero crumbs={[{ label: 'Services' }]} theme="dark" cue={{ label: 'Our services', href: '#services' }}>
+  <PageHero crumbs={[{ label: 'Services' }]} cue={{ label: 'Our services', href: '#services' }}>
     This is <span class="light">what</span><br />we do <span class="light">best</span>
     <Fragment slot="lead">Consulting, branding &amp; marketing, operations &amp; management, and digital, under one roof.</Fragment>
   </PageHero>
 
-  <section class="section theme-dark" id="services" data-theme-section="dark" aria-label="Services" style="padding-top:0">
+  <section class="section theme-soft" id="services" data-theme-section="light" aria-label="Services">
     <div class="container">
       <div class="svc-list">
         {services.map((s, i) => (
-          <article class="svc-row" aria-labelledby={`svc-${s.slug}`}>
-            <span class="svc-row__num" data-reveal>0{i + 1}</span>
+          <article class="svc-row" aria-labelledby={`svc-${s.slug}`} data-clip>
+            <span class="svc-row__num">0{i + 1}</span>
             <h2 class="svc-row__title" id={`svc-${s.slug}`} data-split>{s.titleBold}{s.titleLight && <><br /><span class="light">{s.titleLight}</span></>}</h2>
-            <div class="svc-row__body" data-reveal>
+            <div class="svc-row__body">
               <p>{s.intro}</p>
               <ul class="svc-row__topics" role="list">{s.highlights.map((h) => <li>{h}</li>)}</ul>
               <a href={`/services/${s.slug}/`} class="link-arrow">Read more<span class="sr-only"> about {s.name}</span> <Icon name="arrow-right" /></a>

@@ -13,7 +13,7 @@ export function init(motion: boolean, lenis: Lenis | null) {
   const mm = gsap.matchMedia();
   mm.add('(min-width: 900px)', () => {
     section.classList.add('is-pinned');
-    const distance = () => Math.max(0, track.scrollWidth - window.innerWidth);
+    const distance = () => Math.max(0, track.scrollWidth - section.clientWidth);
     const tween = gsap.to(track, {
       x: () => -distance(),
       ease: 'none',
@@ -26,6 +26,14 @@ export function init(motion: boolean, lenis: Lenis | null) {
         invalidateOnRefresh: true,
         onUpdate: (self) => { if (bar) bar.style.transform = `scaleX(${self.progress})`; },
       },
+    });
+
+    // Each cover drifts inside its frame as the reel moves
+    gsap.utils.toArray<HTMLElement>('.pcard__media img', track).forEach((img) => {
+      gsap.fromTo(img, { xPercent: -5 }, {
+        xPercent: 5, ease: 'none',
+        scrollTrigger: { trigger: img.closest('.reel__item'), containerAnimation: tween, start: 'left right', end: 'right left', scrub: true },
+      });
     });
 
     // Keyboard users: bring a focused card into view

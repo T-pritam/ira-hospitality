@@ -1,0 +1,27 @@
+---
+import { Picture } from 'astro:assets';
+import { img } from '../data/images';
+import type { founders } from '../data/people';
+interface Props { founder: (typeof founders)[number]; id: string; brands?: boolean }
+const { founder: f, id, brands = true } = Astro.props;
+---
+<article class="founder" aria-labelledby={id}>
+  <div class="founder__media media" data-clip>
+    <Picture src={img(f.photo)} alt={`Portrait of ${f.name}, ${f.role} of Ira Hospitality`} widths={[480, 720, 960]} sizes="(min-width: 860px) 46vw, 92vw" formats={['avif', 'webp']} class="parallax-img" data-parallax />
+    <div class="founder__plate glass-dark">
+      <h3 class="founder__name" id={id}>{f.name}</h3>
+      <p class="founder__role">{f.role}</p>
+    </div>
+  </div>
+  <div class="founder__body">
+    <div class="founder__stat" data-reveal>
+      <strong class="accent" data-count>{f.stat.value}</strong><span>{f.stat.label}</span>
+    </div>
+    <div class="founder__bio" data-reveal>{f.bio.map((p) => <p>{p}</p>)}</div>
+    {brands && f.brands.length > 0 && (
+      <ul class="founder__brands" role="list" data-reveal aria-label={`Brands ${f.name} has worked with`}>
+        {f.brands.map((b) => <li class="chip">{b}</li>)}
+      </ul>
+    )}
+  </div>
+</article>
