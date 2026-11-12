@@ -2,6 +2,8 @@
 
 Static marketing site for IRA Hospitality (irahospitality.co.in), built with **Astro 5**, **GSAP 3.13** (ScrollTrigger + SplitText) and **Lenis** smooth scrolling.
 
+Project context lives in this repo: `CLAUDE.md` (working guide), `docs/HANDOFF.md` (status, decisions, open items) and `docs/source-pack/` (capture of the old site: all copy, design tokens, screenshots).
+
 ## Run locally
 
 ```bash
