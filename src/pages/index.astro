@@ -1,0 +1,245 @@
+---
+import { Picture } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Button from '../components/Button.astro';
+import Icon from '../components/Icon.astro';
+import Dodeca from '../components/Dodeca.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import ContactForm from '../components/ContactForm.astro';
+import { img } from '../data/images';
+import { services } from '../data/services';
+import { projects } from '../data/projects';
+import { founders, testimonials, clientNames } from '../data/people';
+import { site } from '../data/site';
+
+const reelProjects = projects.filter((p) => p.cover);
+---
+<Base headerTheme="dark" label="Homepage" preloader footerCta={false}>
+  <!-- 1 · Hero -->
+  <section class="hero hairlines theme-dark" data-theme-section="dark" aria-labelledby="hero-title">
+    <Dodeca class="hero__canvas hero__canvas--main" color="rgba(255,255,255,0.3)" />
+    <Dodeca class="hero__canvas hero__canvas--sm" color="rgba(255,255,255,0.25)" speed={1.6} />
+    <Dodeca class="hero__canvas hero__canvas--xs" color="rgba(255,255,255,0.22)" speed={2.2} />
+    <div class="container hero__inner">
+      <h1 class="hero__title" id="hero-title" data-split="intro">
+        Designed <span class="light">for the Guest,</span><br />
+        Built <span class="light">for the Brand.</span>
+      </h1>
+      <p class="hero__copy" data-intro>
+        We position hospitality brands for impact through storytelling, strategy and soul. Every element, from identity to experience, is curated to inspire loyalty and elevate perception.
+      </p>
+      <div class="hero__actions" data-intro>
+        <Button href="/services/">What we do</Button>
+        <a href="/contact/" class="link-arrow">Let’s build your brand <Icon name="arrow-right" /></a>
+      </div>
+    </div>
+    <a href="#studio" class="hero__scroll" aria-label="Scroll down to discover our studio" data-intro>
+      <svg class="hero__scroll-text" viewBox="0 0 120 120" aria-hidden="true">
+        <defs><path id="circle-path" d="M60,60 m-46,0 a46,46 0 1,1 92,0 a46,46 0 1,1 -92,0" /></defs>
+        <text font-size="10.5" font-weight="700" letter-spacing="4.2" fill="currentColor"><textPath href="#circle-path">SCROLL DOWN • SCROLL DOWN • SCROLL DOWN •</textPath></text>
+      </svg>
+      <span class="hero__scroll-btn"><Icon name="arrow-down" /></span>
+    </a>
+  </section>
+
+  <!-- 2 · Studio -->
+  <section class="section theme-light hairlines" id="studio" data-theme-section="light" aria-labelledby="studio-title">
+    <div class="container">
+      <p class="eyebrow" data-reveal id="studio-title">Discover our studio</p>
+      <div class="studio__grid" style="margin-top:clamp(2rem,4vw,3.5rem)">
+        <div>
+          <p class="studio__statement" data-words>
+            At <strong>Ira Hospitality</strong>, we curate <strong>extraordinary hospitality experiences</strong>, with bespoke solutions that turn hotels, restaurants and lifestyle spaces into <strong>guest-centric destinations.</strong>
+          </p>
+          <div class="studio__note">
+            <p data-reveal>A team of industry leaders bringing design innovation, marketing strategy and operational excellence to every project, with world-class standards in hospitality management, concept development and brand positioning.</p>
+            <div class="studio__sig" data-reveal>
+              <span class="dot"><Icon name="sparkle" /></span>
+              <span><strong>Passionately creating</strong> <span class="muted">design wonders:</span><br /><strong>Unleashing</strong> <span class="muted">boundless creativity</span></span>
+            </div>
+            <div data-reveal><Button href="/about/">About the studio</Button></div>
+          </div>
+        </div>
+        <div class="media media--tall" data-clip>
+          <Picture src={img('about-studio-team.jpg')} alt="Indian Durbar menu with gold cutlery and coaster on marble, designed by Ira Hospitality" widths={[480, 720, 1024]} sizes="(min-width: 960px) 42vw, 92vw" formats={['avif', 'webp']} class="parallax-img" data-parallax />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 · Services (stacked cards) -->
+  <section class="section theme-dark" data-theme-section="dark" aria-labelledby="services-title">
+    <div class="container">
+      <div class="services-intro">
+        <h2 class="h2" id="services-title" data-split>Where <span class="light muted">Hospitality</span><br />Finds Its <span class="light muted">Voice.</span></h2>
+        <div data-reveal style="display:grid;gap:1.75rem;justify-items:start">
+          <p>Helping hotels and restaurants speak with clarity, creativity and purpose.</p>
+          <Button href="/services/">What we do</Button>
+        </div>
+      </div>
+      <div class="stack" data-stack>
+        {services.map((s, i) => (
+          <a href={`/services/${s.slug}/`} class="stack__card">
+            <span class="stack__glow" aria-hidden="true"></span>
+            <span class="stack__num" aria-hidden="true">0{i + 1}</span>
+            <div class="stack__body">
+              <div>
+                <h3 class="stack__title">{s.titleBold}{s.titleLight && <> <span class="light">{s.titleLight}</span></>}</h3>
+                <p class="stack__text" style="margin-top:1.5rem">{s.short}</p>
+              </div>
+              <div class="stack__foot">
+                <ul class="stack__tags" role="list">{s.highlights.slice(0, 3).map((h) => <li class="chip">{h}</li>)}</ul>
+                <span class="round-arrow" aria-hidden="true"><Icon name="arrow-right" /></span>
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 · Selected work (horizontal reel) -->
+  <section class="section reel theme-light" data-theme-section="light" data-reel aria-labelledby="work-title">
+    <div class="container reel__head">
+      <div>
+        <p class="eyebrow" data-reveal>Selected work</p>
+        <h2 class="h2" id="work-title" style="margin-top:1.5rem" data-split>Designing a <span class="light muted">Better</span><br />World <span class="light muted">Today</span></h2>
+      </div>
+      <a href="/projects/" class="link-arrow" data-reveal>View all projects <Icon name="arrow-right" /></a>
+    </div>
+    <div class="reel__track" role="region" aria-label="Project gallery, scroll sideways" tabindex="0">
+      {reelProjects.map((p) => (
+        <div class="reel__item"><ProjectCard project={p} sizes="(min-width: 900px) 30vw, 78vw" reveal={false} /></div>
+      ))}
+      <div class="reel__end">
+        <p class="h3">Explore <span class="light muted">the full portfolio</span></p>
+        <Button href="/projects/">View all</Button>
+      </div>
+    </div>
+    <div class="reel__progress" aria-hidden="true"><span></span></div>
+  </section>
+
+  <!-- 5 · Founders -->
+  <section class="section theme-dark hairlines" data-theme-section="dark" aria-labelledby="team-title">
+    <div class="container">
+      <div class="founders-head">
+        <div>
+          <p class="eyebrow" data-reveal>Meet our team · The founders</p>
+          <h2 class="h2" id="team-title" style="margin-top:1.5rem" data-split>Shaping the Future <span class="light muted">of Hospitality</span></h2>
+        </div>
+        <div data-reveal>
+          <p><strong style="color:var(--white)">A three-dimensional approach to excellence</strong>, merging expertise in operations, marketing strategy and design for unparalleled hospitality branding.</p>
+          <p style="margin-top:1rem">Ira Hospitality is led by Suhasini and Siddarth, whose combined experience bridges brand thinking, culinary insight and commercial execution.</p>
+        </div>
+      </div>
+
+      {founders.map((f, i) => (
+        <article class={`founder ${i % 2 ? 'founder--flip' : ''}`} aria-labelledby={`founder-${i}`}>
+          <div class="founder__media">
+            <div class="media" data-clip>
+              <Picture src={img(f.photo)} alt={`Portrait of ${f.name}, ${f.role} of Ira Hospitality`} widths={[480, 720, 960]} sizes="(min-width: 900px) 42vw, 92vw" formats={['avif', 'webp']} class="parallax-img" data-parallax />
+            </div>
+            <span class="founder__tag">{f.role}</span>
+          </div>
+          <div>
+            <h3 class="founder__name" id={`founder-${i}`} data-split>{f.name}</h3>
+            <p class="eyebrow eyebrow--plain founder__role" data-reveal>Co-Founder · Director</p>
+            <div class="founder__stat" data-reveal>
+              <strong class="accent">{f.stat.value}</strong><span>{f.stat.label}</span>
+            </div>
+            <div class="founder__bio" data-reveal>{f.bio.map((p) => <p>{p}</p>)}</div>
+            {f.brands.length > 0 && (
+              <ul class="founder__brands" role="list" data-reveal aria-label="Brands Suhasini has worked with">
+                {f.brands.map((b) => <li class="chip">{b}</li>)}
+              </ul>
+            )}
+          </div>
+        </article>
+      ))}
+
+      <div class="base" data-reveal>
+        <p>Headquartered in <strong>Hyderabad, India</strong> · Operating <strong>Globally</strong></p>
+        <Button href="/about/">Read more about us</Button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 · Client voice -->
+  <section class="section theme-soft" data-theme-section="light" aria-labelledby="voice-title">
+    <div class="container">
+      <div class="voices__head">
+        <div>
+          <p class="eyebrow" data-reveal>Client voice</p>
+          <h2 class="h2" id="voice-title" style="margin-top:1.5rem" data-split>Hear What <span class="light muted">They Say!</span></h2>
+        </div>
+        <p data-reveal>Customer reviews are a valuable source of information for both businesses and consumers.</p>
+      </div>
+
+      <div class="voices" data-voices>
+        <div class="voices__stage">
+          {testimonials.map((t, i) => (
+            <div class="voice" role="tabpanel" id={`voice-panel-${i}`} aria-labelledby={`voice-tab-${i}`} hidden={i !== 0} data-reveal={i === 0 ? '' : undefined}>
+            <figure style="display:grid;gap:2rem">
+              <Icon name="quote" class="voice__mark" />
+              <blockquote>
+                <p class="voice__pull">“{t.pull}”</p>
+                <details class="voice__full">
+                  <summary>Read the full review</summary>
+                  <p>{t.quote}</p>
+                </details>
+              </blockquote>
+              <figcaption class="voice__who">
+                <img src={img(t.logo).src} width="64" height="64" alt={t.logoAlt} loading="lazy" decoding="async" />
+                <span><strong>{t.name}</strong><span>{t.org}</span></span>
+              </figcaption>
+            </figure>
+            </div>
+          ))}
+        </div>
+        <div class="voices__nav">
+          <div class="voices__tabs" role="tablist" aria-label="Choose a testimonial">
+            {testimonials.map((t, i) => (
+              <button class="voices__tab" type="button" role="tab" id={`voice-tab-${i}`} aria-controls={`voice-panel-${i}`} aria-selected={i === 0 ? 'true' : 'false'} tabindex={i === 0 ? 0 : -1} aria-label={`${t.name}, ${t.org}`}>
+                <img src={img(t.logo).src} width="56" height="56" alt="" loading="lazy" decoding="async" />
+              </button>
+            ))}
+          </div>
+          <div class="voices__arrows">
+            <button class="icon-btn" type="button" data-prev aria-label="Previous testimonial"><Icon name="arrow-left" /></button>
+            <button class="icon-btn" type="button" data-next aria-label="Next testimonial"><Icon name="arrow-right" /></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:clamp(4rem,9vw,8rem)">
+      <p class="container eyebrow" style="margin-bottom:1.5rem" data-reveal>Hotels, restaurants and brands we’ve worked with</p>
+      <div class="marquee">
+        <div class="marquee__track">
+          {[0, 1].map((k) => (
+            <div class="marquee__group" aria-hidden={k === 1 ? 'true' : undefined}>
+              {clientNames.map((n) => <><span>{n}</span><i aria-hidden="true"></i></>)}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 · Contact -->
+  <section class="section theme-dark hairlines" id="contact" data-theme-section="dark" aria-labelledby="contact-title">
+    <div class="container contact-grid">
+      <div>
+        <h2 class="h2" id="contact-title" data-split>Let’s Start <span class="light muted">Something New.</span></h2>
+        <p class="lead" style="margin-top:2rem" data-reveal>Ready to take your brand to the next level? We’re here to help you shape the future of hospitality.</p>
+        <dl class="contact-list" data-reveal>
+          <div><dt>Contact</dt><dd><a href={`mailto:${site.email}`}>{site.email}</a><br /><a href={site.phoneHref}>{site.phone}</a></dd></div>
+          <div><dt>Visit us</dt><dd><a href={site.mapsLink} target="_blank" rel="noopener">{site.address.lines.join(', ')}</a></dd></div>
+        </dl>
+      </div>
+      <div class="form-card" data-reveal>
+        <ContactForm source="home_page" idPrefix="home" />
+      </div>
+    </div>
+  </section>
+</Base>

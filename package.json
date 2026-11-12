@@ -1,0 +1,21 @@
+{
+  "name": "ira-hospitality",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "sync-jobs": "node scripts/sync-jobs.mjs",
+    "prebuild": "node scripts/sync-jobs.mjs"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "3.2.1",
+    "@fontsource-variable/inter": "5.1.1",
+    "astro": "5.7.10",
+    "gsap": "3.13.0",
+    "lenis": "1.3.4",
+    "sharp": "0.34.1"
+  }
+}

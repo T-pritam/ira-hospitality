@@ -1,0 +1,37 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import { projects } from '../../data/projects';
+import { site } from '../../data/site';
+
+const itemList = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: 'IRA Hospitality portfolio',
+  itemListElement: projects.map((p, i) => ({ '@type': 'ListItem', position: i + 1, name: p.name, url: `${site.url}/projects/${p.slug}/` })),
+};
+---
+<Base
+  title="Our Portfolio"
+  description="Selected hospitality branding, digital and operations work by Ira Hospitality: Indian Durbar at Conrad Bengaluru, Iris at Trident Pune, Nest, OG Green, Dessert Kart and more."
+  headerTheme="light"
+  label="Projects"
+  jsonLd={itemList}
+>
+  <PageHero crumbs={[{ label: 'Portfolio' }]} cue={{ label: 'Our works', href: '#works' }}>
+    Designing a <span class="light">Better</span><br />World <span class="light">Today</span>
+    <Fragment slot="lead">A selection of hospitality brands we have shaped, from identity and menus to spaces and digital platforms.</Fragment>
+  </PageHero>
+
+  <section class="section theme-light" id="works" data-theme-section="light" aria-label="Projects">
+    <div class="container">
+      <div class="work-grid">
+        {projects.map((p, i) => <ProjectCard project={p} eager={i < 2} />)}
+      </div>
+    </div>
+  </section>
+
+  <CtaBand>Ready to bring your ideas to life? <span class="light muted">We’re here to help</span></CtaBand>
+</Base>

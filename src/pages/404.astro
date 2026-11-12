@@ -1,0 +1,19 @@
+---
+import Base from '../layouts/Base.astro';
+import Button from '../components/Button.astro';
+import Dodeca from '../components/Dodeca.astro';
+---
+<Base title="Page not found" noindex headerTheme="dark">
+  <section class="hero hairlines theme-dark" data-theme-section="dark">
+    <Dodeca class="hero__canvas hero__canvas--main" color="rgba(255,255,255,0.3)" />
+    <div class="container hero__inner">
+      <p class="eyebrow" data-intro>Error 404</p>
+      <h1 class="h1" style="margin-top:1.5rem" data-split="intro">Page <span class="light">not found.</span></h1>
+      <p class="hero__copy" data-intro>The page you’re looking for doesn’t exist or has moved.</p>
+      <div class="hero__actions" data-intro>
+        <Button href="/">Back to home</Button>
+        <a href="/projects/" class="link-arrow">See our work</a>
+      </div>
+    </div>
+  </section>
+</Base>

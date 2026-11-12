@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /careers/apply/
+
+Sitemap: https://www.irahospitality.co.in/sitemap-index.xml

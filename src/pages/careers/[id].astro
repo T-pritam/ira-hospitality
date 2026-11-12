@@ -1,0 +1,60 @@
+---
+import Base from '../../layouts/Base.astro';
+import Button from '../../components/Button.astro';
+import Icon from '../../components/Icon.astro';
+import { jobs, formatDate, splitLabel, type Job } from '../../data/jobs';
+import { site } from '../../data/site';
+
+export function getStaticPaths() {
+  return jobs.map((j) => ({ params: { id: j.id }, props: { job: j } }));
+}
+interface Props { job: Job }
+const { job } = Astro.props;
+const summary = job.description.find((l) => !splitLabel(l)[0]) ?? job.description[0] ?? '';
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'JobPosting',
+  title: job.title,
+  description: `<p>${[...job.description, ...job.requirements].join('</p><p>')}</p>`,
+  datePosted: job.posted.toISOString(),
+  employmentType: job.type.toUpperCase().replace('-', '_'),
+  hiringOrganization: { '@type': 'Organization', name: site.name, sameAs: site.url, logo: `${site.url}/android-chrome-512x512.png` },
+  jobLocation: { '@type': 'Place', address: { '@type': 'PostalAddress', streetAddress: site.address.street, addressLocality: job.location, addressRegion: site.address.region, addressCountry: 'IN' } },
+};
+---
+<Base title={`${job.title} – Careers`} description={`${job.title} · ${job.location} · ${job.type}. ${summary}`.slice(0, 158)} headerTheme="light" label="Careers" jsonLd={jsonLd}>
+  <section class="proj-hero theme-light" data-theme-section="light">
+    <div class="container">
+      <a href="/careers/" class="back-link" data-intro><Icon name="arrow-left" />Back to careers</a>
+      <p class="eyebrow" data-intro>{job.location} · {job.type}</p>
+      <h1 class="proj-hero__title" style="margin-top:1.5rem;font-size:clamp(2.5rem,1rem + 5vw,6.5rem)" data-split="intro">{job.title}</h1>
+    </div>
+  </section>
+
+  <section class="section theme-light" data-theme-section="light" style="padding-top:0">
+    <div class="container job-layout">
+      <article class="prose">
+        <h2>Job Description</h2>
+        {job.description.map((line) => {
+          const [label, rest] = splitLabel(line);
+          return label ? (rest ? <p><strong>{label}:</strong> {rest}</p> : <p><strong>{label}</strong></p>) : <p>{line}</p>;
+        })}
+        <h2>Requirements</h2>
+        <ul>
+          {job.requirements.map((r) => {
+            const [label, rest] = splitLabel(r);
+            return <li><span>{label ? <><strong>{label}:</strong> {rest}</> : r}</span></li>;
+          })}
+        </ul>
+      </article>
+      <aside class="job-aside" aria-label="Role summary">
+        <dl>
+          <div><dt>Location</dt><dd>{job.location}</dd></div>
+          <div><dt>Type</dt><dd>{job.type}</dd></div>
+          <div><dt>Posted</dt><dd><time datetime={job.posted.toISOString()}>{formatDate(job.posted)}</time></dd></div>
+        </dl>
+        <Button href={`/careers/apply/${job.id}/`} block>Apply now</Button>
+      </aside>
+    </div>
+  </section>
+</Base>

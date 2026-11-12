@@ -1,0 +1,92 @@
+---
+import { Picture } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Button from '../components/Button.astro';
+import { img } from '../data/images';
+import { founders } from '../data/people';
+
+const pillars = [
+  { title: 'Industry Expertise', text: 'A seasoned team with decades of experience in global hospitality.' },
+  { title: 'Innovative Approach', text: 'Data-driven strategies that enhance guest satisfaction and ROI.' },
+  { title: 'Customized Solutions', text: 'Every project is tailored to its market and to the brand’s vision.' },
+];
+---
+<Base
+  title="About Us"
+  description="Ira Hospitality curates extraordinary hospitality experiences, with bespoke solutions that turn hotels, restaurants and lifestyle spaces into profitable, guest-centric destinations. Meet founders Suhasini and Siddarth."
+  headerTheme="light"
+  label="About Us"
+>
+  <PageHero crumbs={[{ label: 'About' }]} cue={{ label: 'Our team', href: '#team' }}>
+    Meet <span class="light">Our Creative</span> Team
+    <Fragment slot="lead">Welcome to Ira Hospitality, redefining hospitality excellence.</Fragment>
+  </PageHero>
+
+  <section class="section theme-light" data-theme-section="light" aria-labelledby="about-title">
+    <div class="container">
+      <h2 class="sr-only" id="about-title">About Us</h2>
+      <p class="studio__statement" data-words style="max-width:22ch">
+        We specialise in <strong>curating extraordinary hospitality experiences</strong> and <strong>bespoke solutions</strong> that turn <strong>hotels, restaurants and lifestyle spaces</strong> into profitable, guest-centric destinations.
+      </p>
+      <div class="grid-2" style="margin-top:clamp(3rem,7vw,6rem);align-items:end">
+        <div class="media media--portrait" data-clip>
+          <Picture src={img('indian-durbar-16.jpg')} alt="Hands holding the Indian Durbar menu, a project by Ira Hospitality" widths={[480, 800]} sizes="(min-width: 900px) 45vw, 92vw" formats={['avif', 'webp']} class="parallax-img" data-parallax />
+        </div>
+        <div style="display:grid;gap:1.5rem">
+          <p class="lead" data-reveal style="max-width:30ch;color:var(--black)">With a team of industry leaders, we bring <strong>innovation, strategy and operational excellence</strong> to every project.</p>
+          <p class="muted" data-reveal>The result: world-class standards in <strong style="color:var(--black)">hospitality management, concept development and brand positioning</strong>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section theme-dark" data-theme-section="dark" aria-labelledby="why-title">
+    <div class="container">
+      <h2 class="h2" id="why-title" style="margin-bottom:clamp(3rem,6vw,5rem)" data-split>Why Choose <span class="light muted">Us?</span></h2>
+      <div class="pillars">
+        {pillars.map((p, i) => (
+          <div class="pillar" data-reveal>
+            <span class="pillar__num">0{i + 1}</span>
+            <h3>{p.title}</h3>
+            <p>{p.text}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section theme-light hairlines" id="team" data-theme-section="light" aria-labelledby="team-title">
+    <div class="container">
+      <div class="founders-head">
+        <div>
+          <p class="eyebrow" data-reveal>The founders of our agency</p>
+          <h2 class="h2" id="team-title" style="margin-top:1.5rem" data-split>Shaping the Future <span class="light muted">of Hospitality</span></h2>
+        </div>
+        <p data-reveal>Ira Hospitality is led by Suhasini and Siddarth, whose combined experience bridges brand thinking, culinary insight and commercial execution across hospitality.</p>
+      </div>
+      {founders.map((f, i) => (
+        <article class={`founder ${i % 2 ? 'founder--flip' : ''}`} aria-labelledby={`f-${i}`}>
+          <div class="founder__media">
+            <div class="media" data-clip>
+              <Picture src={img(f.photo)} alt={`Portrait of ${f.name}, ${f.role} of Ira Hospitality`} widths={[480, 720, 960]} sizes="(min-width: 900px) 42vw, 92vw" formats={['avif', 'webp']} class="parallax-img" data-parallax />
+            </div>
+            <span class="founder__tag">{f.role}</span>
+          </div>
+          <div>
+            <h3 class="founder__name" id={`f-${i}`} data-split>{f.name}</h3>
+            <div class="founder__stat" data-reveal><strong class="accent">{f.stat.value}</strong><span>{f.stat.label}</span></div>
+            <div class="founder__bio" data-reveal>{f.bio.map((p) => <p>{p}</p>)}</div>
+          </div>
+        </article>
+      ))}
+      <div class="base" data-reveal>
+        <p><strong>Let’s build something remarkable!</strong> Whether you’re launching a new hotel, revamping a restaurant or seeking strategic growth, we are your trusted hospitality partners.</p>
+        <Button href="/services/">Our services</Button>
+      </div>
+    </div>
+  </section>
+
+  <CtaBand>Ready to bring your ideas to life? <span class="light muted">We’re here to help</span></CtaBand>
+</Base>

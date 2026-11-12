@@ -1,0 +1,59 @@
+---
+import { Image } from 'astro:assets';
+import logoGold from '../assets/logo-gold.png';
+import Icon from './Icon.astro';
+import { footerNav, usefulLinks, site } from '../data/site';
+const path = Astro.url.pathname.replace(/\/?$/, '/');
+const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWith(href));
+const year = new Date().getFullYear();
+interface Props { cta?: boolean }
+const { cta = true } = Astro.props;
+---
+<footer class="site-footer" data-theme-section="dark">
+  <div class="container">
+    {cta && <div class="footer-big">
+      <p class="eyebrow">Have a project in mind?</p>
+      <p class="footer-big__title">
+        <a href="/contact/"><span><span class="light">Let’s</span> talk</span><span class="round-arrow"><Icon name="arrow-right" /></span></a>
+      </p>
+    </div>}
+
+    <div class="footer-grid" style={cta ? undefined : 'border-top:0;padding-top:clamp(4rem,8vw,6rem)'}>
+      <div>
+        <a href="/" aria-label="IRA Hospitality, home"><Image src={logoGold} alt="IRA Hospitality" class="footer-logo" width={228} height={140} format="webp" /></a>
+        <div class="socials">
+          <a href={site.social.instagram} target="_blank" rel="noopener" aria-label="IRA Hospitality on Instagram (opens in a new tab)"><Icon name="instagram" /></a>
+          <a href={site.social.facebook} target="_blank" rel="noopener" aria-label="IRA Hospitality on Facebook (opens in a new tab)"><Icon name="facebook" /></a>
+          <a href={`mailto:${site.email}`} aria-label={`Email ${site.email}`}><Icon name="mail" /></a>
+        </div>
+      </div>
+      <nav aria-label="Footer">
+        <h2>Explore</h2>
+        <ul role="list">
+          {footerNav.map((l) => <li><a href={l.href} aria-current={isCurrent(l.href) ? 'page' : undefined}>{l.label}</a></li>)}
+        </ul>
+      </nav>
+      <div>
+        <h2>Address</h2>
+        <address>
+          {site.address.lines.map((l) => <>{l}<br /></>)}
+          <a href={site.mapsLink} target="_blank" rel="noopener" class="link-arrow" style="margin-top:.5rem">Get directions <Icon name="arrow-up-right" /></a>
+        </address>
+      </div>
+      <div>
+        <h2>Contact</h2>
+        <ul role="list">
+          <li><a href={site.phoneHref}>{site.phone}</a></li>
+          <li><a href={`mailto:${site.email}`}>{site.email}</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-base">
+      <p>© Copyright {year} IRA. All Rights Reserved.</p>
+      <ul role="list" style="display:flex;flex-wrap:wrap;gap:1.5rem">
+        {usefulLinks.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+      </ul>
+    </div>
+  </div>
+</footer>

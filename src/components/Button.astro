@@ -1,0 +1,25 @@
+---
+import Icon from './Icon.astro';
+interface Props {
+  href?: string;
+  type?: 'button' | 'submit';
+  variant?: 'primary' | 'ghost';
+  block?: boolean;
+  class?: string;
+  magnetic?: boolean;
+  [key: string]: unknown;
+}
+const { href, type = 'button', variant = 'primary', block, class: cls, magnetic = true, ...rest } = Astro.props;
+const classes = ['btn', variant === 'ghost' && 'btn--ghost', block && 'btn--block', cls].filter(Boolean).join(' ');
+---
+{href ? (
+  <a href={href} class={classes} data-magnetic={magnetic ? '' : undefined} {...rest}>
+    <span class="btn__label"><slot /></span>
+    <span class="btn__disc"><Icon name="arrow-right" /><span class="spinner" aria-hidden="true"></span></span>
+  </a>
+) : (
+  <button type={type} class={classes} data-magnetic={magnetic ? '' : undefined} {...rest}>
+    <span class="btn__label"><slot /></span>
+    <span class="btn__disc"><Icon name="arrow-right" /><span class="spinner" aria-hidden="true"></span></span>
+  </button>
+)}

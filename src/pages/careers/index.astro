@@ -1,0 +1,56 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import Icon from '../../components/Icon.astro';
+import { jobs, formatDate } from '../../data/jobs';
+---
+<Base title="Careers" description={`Join Ira Hospitality in Hyderabad. ${jobs.length} open roles across marketing, design, kitchen, service, front office, finance and HR.`} headerTheme="light" label="Careers">
+  <PageHero crumbs={[{ label: 'Careers' }]} cue={{ label: 'Open roles', href: '#roles' }}>
+    Join <span class="light">Our</span> Team
+    <Fragment slot="lead">Find your next career opportunity with us.</Fragment>
+  </PageHero>
+
+  <section class="section theme-light" id="roles" data-theme-section="light" aria-labelledby="roles-title" style="padding-top:0">
+    <div class="container">
+      <h2 class="sr-only" id="roles-title">Open roles</h2>
+      <div class="jobs-tools" data-reveal>
+        <div class="field">
+          <label for="job-search">Search roles</label>
+          <input id="job-search" type="search" placeholder="e.g. Chef, Marketing, Barista" data-job-search />
+          <span class="field__line"></span>
+        </div>
+        <p class="jobs-count" aria-live="polite"><span data-job-count>{jobs.length}</span> open positions</p>
+      </div>
+      <ul class="job-list" role="list" data-job-list>
+        {jobs.map((j) => (
+          <li data-title={j.title.toLowerCase()}>
+            <a href={`/careers/${j.id}/`} class="job-row">
+              <div>
+                <h3>{j.title}</h3>
+                <div class="job-row__meta">
+                  <span>{j.location}</span><span>{j.type}</span><span>Posted {formatDate(j.posted)}</span>
+                </div>
+              </div>
+              <span class="round-arrow" aria-hidden="true"><Icon name="arrow-right" /></span>
+            </a>
+          </li>
+        ))}
+      </ul>
+      <p class="job-empty" data-job-empty hidden>No roles match your search. Try another keyword.</p>
+    </div>
+  </section>
+</Base>
+
+<script>
+  const input = document.querySelector<HTMLInputElement>('[data-job-search]')!;
+  const items = Array.from(document.querySelectorAll<HTMLElement>('[data-job-list] li'));
+  const count = document.querySelector<HTMLElement>('[data-job-count]')!;
+  const empty = document.querySelector<HTMLElement>('[data-job-empty]')!;
+  input.addEventListener('input', () => {
+    const q = input.value.trim().toLowerCase();
+    let n = 0;
+    items.forEach((li) => { const show = !q || li.dataset.title!.includes(q); li.hidden = !show; if (show) n++; });
+    count.textContent = String(n);
+    empty.hidden = n > 0;
+  });
+</script>

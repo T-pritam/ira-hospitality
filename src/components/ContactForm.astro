@@ -1,0 +1,40 @@
+---
+import Button from './Button.astro';
+import { site } from '../data/site';
+interface Props { source: 'home_page' | 'contact_page'; idPrefix?: string }
+const { source, idPrefix = 'c' } = Astro.props;
+const id = (n: string) => `${idPrefix}-${n}`;
+---
+<form class="form" data-form="contact" data-source={source} data-endpoint={`${site.apiBase}/contacts`} novalidate aria-label="Contact form">
+  <div class="form__row form__row--2">
+    <div class="field">
+      <label for={id('name')}>Name <span class="req" aria-hidden="true">*</span></label>
+      <input id={id('name')} name="name" type="text" autocomplete="name" required data-label="Name" placeholder="Your name" />
+      <span class="field__line"></span>
+    </div>
+    <div class="field">
+      <label for={id('phone')}>Phone number <span class="req" aria-hidden="true">*</span></label>
+      <input id={id('phone')} name="phone" type="tel" autocomplete="tel" inputmode="tel" required data-phone data-label="Phone number" placeholder="+91 98765 43210" />
+      <span class="field__line"></span>
+    </div>
+  </div>
+  <div class="field">
+    <label for={id('email')}>Email <span class="req" aria-hidden="true">*</span></label>
+    <input id={id('email')} name="email" type="email" autocomplete="email" required data-label="Email" placeholder="you@company.com" />
+    <span class="field__line"></span>
+  </div>
+  <div class="field">
+    <label for={id('message')}>Message <span class="req" aria-hidden="true">*</span></label>
+    <textarea id={id('message')} name="message" rows="4" required data-label="Message" placeholder="Tell us about your project…"></textarea>
+    <span class="field__line"></span>
+  </div>
+  <div class="hp" aria-hidden="true">
+    <label for={id('website')}>Leave this field empty</label>
+    <input id={id('website')} name="company_website" type="text" tabindex="-1" autocomplete="off" />
+  </div>
+  <div class="form__status" data-status role="status" aria-live="polite" tabindex="-1"></div>
+  <div class="form__foot">
+    <p class="form__note">* We promise not to disclose your personal information to third parties.</p>
+    <Button type="submit" magnetic={false}>Send message</Button>
+  </div>
+</form>

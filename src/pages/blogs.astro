@@ -1,0 +1,82 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Button from '../components/Button.astro';
+import Icon from '../components/Icon.astro';
+import { site } from '../data/site';
+---
+<Base
+  title="Insights & Stories"
+  description="Read our latest insights, stories, and thought leadership on hospitality management, trends, and guest experiences."
+  headerTheme="light"
+  label="Blog"
+>
+  <PageHero crumbs={[{ label: 'Blog' }]} cue={{ label: 'Explore articles', href: '#articles' }}>
+    Insights &amp; <span class="light">Stories from</span><br />Hospitality
+    <Fragment slot="lead">Insights, stories and thought leadership on hospitality management, trends and guest experiences.</Fragment>
+  </PageHero>
+
+  <section class="section theme-light" id="articles" data-theme-section="light" aria-label="Articles" style="padding-top:0">
+    <div class="container">
+      <div class="jobs-tools" data-reveal>
+        <div class="field">
+          <label for="blog-search">Search articles</label>
+          <input id="blog-search" type="search" placeholder="Search articles…" data-blog-search data-skip-validate />
+          <span class="field__line"></span>
+        </div>
+      </div>
+      <div data-blog data-api={site.apiBase} aria-live="polite">
+        <div class="empty-state" data-blog-loading><div class="loading-line" role="progressbar" aria-label="Loading articles"></div></div>
+        <div class="blog-grid" data-blog-grid hidden></div>
+        <div class="empty-state" data-blog-empty hidden>
+          <p class="h3" style="color:var(--black)">No blog posts found</p>
+          <p>Our first stories are on their way. Meanwhile, see what we’ve been building, or follow along on Instagram.</p>
+          <div style="display:flex;flex-wrap:wrap;gap:1rem 2rem;align-items:center">
+            <Button href="/projects/">See our work</Button>
+            <a href={site.social.instagram} target="_blank" rel="noopener" class="link-arrow">Instagram <Icon name="arrow-up-right" /></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  // Posts are managed in the IRA backend (GET /blogs). Rendered client-side so new
+  // posts appear without a rebuild. Fields used: title, slug, image, description, createdAt.
+  type Post = { title: string; slug: string; image?: string; description?: string; createdAt?: string };
+  const root = document.querySelector<HTMLElement>('[data-blog]')!;
+  const grid = root.querySelector<HTMLElement>('[data-blog-grid]')!;
+  const empty = root.querySelector<HTMLElement>('[data-blog-empty]')!;
+  const loading = root.querySelector<HTMLElement>('[data-blog-loading]')!;
+  const search = document.querySelector<HTMLInputElement>('[data-blog-search]')!;
+  const esc = (s = '') => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
+  const safeUrl = (u = '') => (/^https:\/\//i.test(u) ? u : '');
+  let timer: number | undefined;
+
+  async function load(q = '') {
+    loading.hidden = false;
+    try {
+      const res = await fetch(`${root.dataset.api}/blogs?page=1&limit=24${q ? `&search=${encodeURIComponent(q)}` : ''}`);
+      const data = await res.json();
+      const posts: Post[] = data.blogs ?? [];
+      grid.innerHTML = posts.map((p) => {
+        const img = safeUrl(p.image);
+        const date = p.createdAt ? new Date(p.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+        return `<a class="pcard blog-card" href="/blog/?slug=${encodeURIComponent(p.slug)}">
+          <div class="pcard__media">${img ? `<img src="${esc(img)}" alt="" loading="lazy" decoding="async" />` : ''}</div>
+          <div class="pcard__meta"><span class="pcard__cat">${esc(date)}</span><h3>${esc(p.title)}</h3><p>${esc(p.description)}</p></div>
+        </a>`;
+      }).join('');
+      grid.hidden = posts.length === 0;
+      empty.hidden = posts.length > 0;
+    } catch {
+      grid.hidden = true;
+      empty.hidden = false;
+    } finally {
+      loading.hidden = true;
+    }
+  }
+  search.addEventListener('input', () => { clearTimeout(timer); timer = window.setTimeout(() => load(search.value.trim()), 350); });
+  load();
+</script>

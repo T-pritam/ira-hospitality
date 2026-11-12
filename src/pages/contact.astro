@@ -1,0 +1,65 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import ContactForm from '../components/ContactForm.astro';
+import Icon from '../components/Icon.astro';
+import { site } from '../data/site';
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ContactPage',
+  name: 'Contact IRA Hospitality',
+  url: `${site.url}/contact/`,
+  mainEntity: { '@id': `${site.url}/#organization` },
+};
+---
+<Base
+  title="Contact Us"
+  description="Start a project with Ira Hospitality. Call +91 9966556007, email studio@irahospitality.co.in or visit us at 15 Golf Pride Homes, Yapral, Hyderabad."
+  headerTheme="light"
+  label="Contact"
+  footerCta={false}
+  jsonLd={jsonLd}
+>
+  <PageHero crumbs={[{ label: 'Contact' }]} cue={{ label: 'Send message', href: '#contact-form' }}>
+    Let’s Start <span class="light">Something</span><br />Great
+    <Fragment slot="lead">Ready to take your brand to the next level? Tell us about your project.</Fragment>
+  </PageHero>
+
+  <section class="section theme-navy hairlines" id="contact-form" data-theme-section="dark" aria-labelledby="talk-title">
+    <div class="container contact-grid">
+      <div>
+        <h2 class="h2" id="talk-title" data-split>Let’s <span class="light muted">Talk</span></h2>
+        <dl class="contact-list" data-reveal>
+          <div><dt>Call us</dt><dd><a href={site.phoneHref}>{site.phone}</a></dd></div>
+          <div><dt>Email</dt><dd><a href={`mailto:${site.email}`}>{site.email}</a></dd></div>
+          <div><dt>Visit us</dt><dd><a href={site.mapsLink} target="_blank" rel="noopener">{site.address.lines.join(', ')}</a></dd></div>
+          <div><dt>Follow</dt><dd style="display:flex;gap:1.5rem;flex-wrap:wrap">
+            <a href={site.social.instagram} target="_blank" rel="noopener">Instagram</a>
+            <a href={site.social.facebook} target="_blank" rel="noopener">Facebook</a>
+          </dd></div>
+        </dl>
+      </div>
+      <div class="form-card" data-reveal>
+        <ContactForm source="contact_page" idPrefix="contact" />
+      </div>
+    </div>
+  </section>
+
+  <section class="section--tight theme-light" data-theme-section="light" aria-labelledby="map-title">
+    <div class="container">
+      <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:1.5rem;margin-bottom:2rem">
+        <h2 class="h3" id="map-title" data-reveal>Find us in Yapral, Hyderabad</h2>
+        <a href={site.mapsLink} target="_blank" rel="noopener" class="link-arrow" data-reveal>Open in Google Maps <Icon name="arrow-up-right" /></a>
+      </div>
+      <div class="map" data-map={site.mapEmbed} data-reveal>
+        <div class="map__load">
+          <div>
+            <span class="map__pin"><Icon name="pin" /></span>
+            <p style="margin:1.25rem 0 1.5rem;color:var(--gray-300)">{site.address.lines.join(', ')}</p>
+            <button type="button" class="btn" data-map-load><span class="btn__label">Show map</span><span class="btn__disc"><Icon name="arrow-right" /></span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>

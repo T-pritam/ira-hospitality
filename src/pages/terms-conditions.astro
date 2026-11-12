@@ -1,0 +1,44 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import { site } from '../data/site';
+---
+<Base title="Terms & Conditions" description="Terms and conditions for using the Ira Hospitality website." headerTheme="light" label="Terms">
+  <PageHero crumbs={[{ label: 'Terms & Conditions' }]}>
+    Terms <span class="light">&amp; Conditions</span>
+    <Fragment slot="lead">Please read these terms carefully before using our website.</Fragment>
+  </PageHero>
+  <section class="section theme-light" data-theme-section="light" style="padding-top:0">
+    <div class="container">
+      <article class="prose" data-reveal>
+        <p>Welcome to Ira Hospitality. By accessing or using our website, you agree to comply with and be bound by the following terms and conditions. Please read them carefully.</p>
+        <h2>1. Acceptance of Terms</h2>
+        <p>By using this website, you acknowledge that you have read, understood, and agree to be bound by these Terms &amp; Conditions. If you do not agree, please do not use our website.</p>
+        <h2>2. Use of Website</h2>
+        <p>You agree to use our website for lawful purposes only. You may not:</p>
+        <ul>
+          <li>Use the site in any way that violates applicable laws or regulations</li>
+          <li>Attempt to gain unauthorized access to any part of the website</li>
+          <li>Transmit any harmful or malicious code</li>
+          <li>Engage in any activity that disrupts or interferes with the website’s functionality</li>
+        </ul>
+        <h2>3. Intellectual Property</h2>
+        <p>All content on this website, including text, graphics, logos, images, and software, is the property of Ira Hospitality or its content suppliers and is protected by intellectual property laws. You may not reproduce, distribute, or create derivative works without our express written permission.</p>
+        <h2>4. Services &amp; Inquiries</h2>
+        <p>Information about our services is provided for general informational purposes. We reserve the right to modify, suspend, or discontinue any service at any time without prior notice. Any inquiries or project requests submitted through our website do not constitute a binding agreement until formally accepted by Ira Hospitality.</p>
+        <h2>5. Limitation of Liability</h2>
+        <p>Ira Hospitality will not be liable for any direct, indirect, incidental, or consequential damages arising from your use of this website or inability to use it. This includes, but is not limited to, damages for loss of profits, data, or other intangible losses.</p>
+        <h2>6. External Links</h2>
+        <p>Our website may contain links to third-party websites. We are not responsible for the content, privacy practices, or terms of use of these external sites. Accessing them is at your own risk.</p>
+        <h2>7. Privacy</h2>
+        <p>Your use of this website is also governed by our <a href="/privacy-policy/">Privacy Policy</a>. Please review it to understand how we collect and use your information.</p>
+        <h2>8. Changes to Terms</h2>
+        <p>We reserve the right to update or modify these Terms &amp; Conditions at any time. Changes will be posted on this page with the updated date. Continued use of the website after changes constitutes acceptance of the revised terms.</p>
+        <h2>9. Governing Law</h2>
+        <p>These Terms &amp; Conditions are governed by and construed in accordance with the laws of India. Any disputes arising from these terms will be subject to the exclusive jurisdiction of the courts in Hyderabad, India.</p>
+        <h2>10. Contact Us</h2>
+        <p>If you have any questions about these Terms &amp; Conditions, please contact us: <a href={`mailto:${site.policyEmail}`}>{site.policyEmail}</a></p>
+      </article>
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,5 @@
+---
+interface Props { class?: string; color?: string; speed?: number; drift?: number }
+const { class: cls, color, speed, drift } = Astro.props;
+---
+<canvas class={cls} data-dodeca data-color={color} data-speed={speed} data-drift={drift} aria-hidden="true"></canvas>

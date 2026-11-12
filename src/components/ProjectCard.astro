@@ -1,0 +1,23 @@
+---
+import { Picture } from 'astro:assets';
+import Icon from './Icon.astro';
+import { img } from '../data/images';
+import type { Project } from '../data/projects';
+interface Props { project: Project; eager?: boolean; sizes?: string; reveal?: boolean }
+const { project: p, eager = false, sizes = '(min-width: 768px) 45vw, 90vw', reveal = true } = Astro.props;
+---
+<a href={`/projects/${p.slug}/`} class="pcard" data-reveal={reveal ? '' : undefined}>
+  <div class="pcard__media">
+    {p.cover ? (
+      <Picture src={img(p.cover)} alt="" widths={[400, 640, 900, 1200]} sizes={sizes} formats={['avif', 'webp']} loading={eager ? 'eager' : 'lazy'} />
+    ) : (
+      <div class="pcard__placeholder" aria-hidden="true"><div><strong>{p.name}</strong><span>Images coming soon</span></div></div>
+    )}
+    <span class="pcard__overlay"><span class="round-arrow"><Icon name="arrow-right" /></span></span>
+  </div>
+  <div class="pcard__meta">
+    <span class="pcard__cat">{p.category}</span>
+    <h3 class="pcard__name">{p.name}</h3>
+    <span class="pcard__tags">{p.tags.join(' · ')}</span>
+  </div>
+</a>

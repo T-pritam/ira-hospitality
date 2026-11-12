@@ -1,0 +1,61 @@
+---
+import { Image } from 'astro:assets';
+import logoGold from '../assets/logo-gold.png';
+import logoGrey from '../assets/logo-grey.png';
+import Button from './Button.astro';
+import { mainNav, menuNav, usefulLinks, site } from '../data/site';
+
+interface Props { theme?: 'dark' | 'light' }
+const { theme = 'dark' } = Astro.props;
+const path = Astro.url.pathname.replace(/\/?$/, '/');
+const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWith(href));
+---
+<header class="site-header" data-on={theme} data-header>
+  <div class="container site-header__bar">
+    <a href="/" class="logo" aria-label="IRA Hospitality, home">
+      <Image src={logoGold} alt="" class="logo--gold" width={228} height={140} format="webp" loading="eager" fetchpriority="high" />
+      <Image src={logoGrey} alt="" class="logo--grey" width={228} height={140} format="webp" loading="eager" />
+    </a>
+
+    <nav class="nav-desktop" aria-label="Main">
+      {mainNav.map((l) => (
+        <a href={l.href} aria-current={isCurrent(l.href) ? 'page' : undefined}>{l.label}</a>
+      ))}
+    </nav>
+
+    <div class="header-actions">
+      <div class="header-cta"><Button href="/contact/">Let’s talk</Button></div>
+      <button class="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="site-menu" data-burger>
+        <span class="burger__lines" aria-hidden="true"><span></span><span></span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="menu" id="site-menu" data-menu aria-label="Site menu" role="dialog" aria-modal="true">
+  <nav aria-label="Menu">
+    <ul class="menu__list" role="list">
+      {menuNav.map((l, i) => (
+        <li class="menu__item">
+          <a href={l.href} aria-current={isCurrent(l.href) ? 'page' : undefined} style={`transition-delay:${0.15 + i * 0.05}s`}>
+            {l.label}<small>0{i + 1}</small>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+  <div class="menu__meta">
+    <div>
+      <h2>Useful links</h2>
+      <ul role="list">
+        {usefulLinks.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+      </ul>
+    </div>
+    <div>
+      <h2>Contact info</h2>
+      <p>{site.address.lines.join(', ')}</p>
+      <p><a href={site.phoneHref}>{site.phone}</a></p>
+      <p><a href={`mailto:${site.email}`}>{site.email}</a></p>
+    </div>
+  </div>
+</div>

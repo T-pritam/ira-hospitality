@@ -1,0 +1,127 @@
+---
+import Base from '../../../layouts/Base.astro';
+import Button from '../../../components/Button.astro';
+import Icon from '../../../components/Icon.astro';
+import { jobs, type Job } from '../../../data/jobs';
+import { site } from '../../../data/site';
+
+export function getStaticPaths() {
+  return jobs.map((j) => ({ params: { id: j.id }, props: { job: j } }));
+}
+interface Props { job: Job }
+const { job } = Astro.props;
+---
+<Base title={`Apply: ${job.title}`} description={`Apply for ${job.title} at Ira Hospitality, ${job.location}.`} headerTheme="light" label="Careers" noindex>
+  <section class="proj-hero theme-light" data-theme-section="light">
+    <div class="container">
+      <a href={`/careers/${job.id}/`} class="back-link" data-intro><Icon name="arrow-left" />Back to role</a>
+      <p class="eyebrow" data-intro>Application</p>
+      <h1 class="proj-hero__title" style="margin-top:1.5rem;font-size:clamp(2.25rem,1rem + 4.5vw,6rem)" data-split="intro">Apply for <span class="light">{job.title}</span></h1>
+      <p class="lead" style="margin-top:1.5rem" data-intro>Please fill out the form below to submit your application.</p>
+    </div>
+  </section>
+
+  <section class="section theme-light" data-theme-section="light" style="padding-top:0">
+    <div class="container" style="max-width:62rem">
+      <div class="form-card" tabindex="-1" data-application-done hidden style="text-align:left">
+        <Icon name="check" size={40} class="accent" />
+        <h2 class="h3" style="margin-top:1.5rem">Application submitted successfully!</h2>
+        <p class="muted" style="margin:1rem 0 2rem">Thank you for applying for {job.title}. Our team will review your application and get in touch.</p>
+        <Button href="/careers/">Back to careers</Button>
+      </div>
+
+      <form class="form-card" data-form="application" data-job-id={job.id} data-endpoint={`${site.apiBase}/applications`} novalidate aria-label={`Application for ${job.title}`}>
+        <fieldset class="form-section" style="border:0;padding:0">
+          <legend class="fieldset-title">Personal information</legend>
+          <div class="form">
+            <div class="field">
+              <label for="fullName">Full name <span class="req" aria-hidden="true">*</span></label>
+              <input id="fullName" name="fullName" type="text" autocomplete="name" required data-label="Full Name" />
+              <span class="field__line"></span>
+            </div>
+            <div class="form__row form__row--2">
+              <div class="field">
+                <label for="email">Email <span class="req" aria-hidden="true">*</span></label>
+                <input id="email" name="email" type="email" autocomplete="email" required data-label="Email" />
+                <span class="field__line"></span>
+              </div>
+              <div class="field">
+                <label for="phone">Phone <span class="req" aria-hidden="true">*</span></label>
+                <input id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" required data-phone data-label="Phone" />
+                <span class="field__line"></span>
+              </div>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset class="form-section" style="border:0;padding-inline:0;padding-bottom:0" data-repeat="education">
+          <legend class="fieldset-title">Education</legend>
+          <div data-repeat-list></div>
+          <button type="button" class="add-more" data-repeat-add>Add more education</button>
+          <template>
+            <div class="repeat-block">
+              <button type="button" class="repeat-remove">Remove</button>
+              <div class="form__row form__row--2">
+                <div class="field"><label for="degree">Degree <span class="req" aria-hidden="true">*</span></label><input id="degree" type="text" placeholder="e.g. B.Sc. Hospitality" required data-key="degree" data-label="Degree" /><span class="field__line"></span></div>
+                <div class="field"><label for="spec">Specialization <span class="req" aria-hidden="true">*</span></label><input id="spec" type="text" placeholder="e.g. Culinary Arts" required data-key="specialization" data-label="Specialization" /><span class="field__line"></span></div>
+              </div>
+              <div class="field"><label for="inst">Institution <span class="req" aria-hidden="true">*</span></label><input id="inst" type="text" placeholder="e.g. University name" required data-key="institution" data-label="Institution" /><span class="field__line"></span></div>
+            </div>
+          </template>
+        </fieldset>
+
+        <fieldset class="form-section" style="border:0;padding-inline:0;padding-bottom:0" data-repeat="experience">
+          <legend class="fieldset-title">Experience</legend>
+          <div data-repeat-list></div>
+          <button type="button" class="add-more" data-repeat-add>Add more experience</button>
+          <template>
+            <div class="repeat-block">
+              <button type="button" class="repeat-remove">Remove</button>
+              <div class="form__row form__row--2">
+                <div class="field"><label for="role">Role <span class="req" aria-hidden="true">*</span></label><input id="role" type="text" placeholder="e.g. Commis Chef" required data-key="role" data-label="Role" /><span class="field__line"></span></div>
+                <div class="field"><label for="company">Company <span class="req" aria-hidden="true">*</span></label><input id="company" type="text" placeholder="e.g. Hotel name" required data-key="company" data-label="Company" /><span class="field__line"></span></div>
+              </div>
+              <div class="form__row form__row--2">
+                <div class="field"><label for="start">Start date <span class="req" aria-hidden="true">*</span></label><input id="start" type="month" required data-key="startDate" data-label="Start date" /><span class="field__line"></span></div>
+                <div class="field"><label for="end">End date <span class="req" aria-hidden="true">*</span></label><input id="end" type="month" required data-key="endDate" data-label="End date" /><span class="field__line"></span></div>
+              </div>
+            </div>
+          </template>
+        </fieldset>
+
+        <fieldset class="form-section" style="border:0;padding-inline:0;padding-bottom:0">
+          <legend class="fieldset-title">Skills</legend>
+          <div class="inline-add">
+            <div class="field">
+              <label for="skill">Add a skill <span class="req" aria-hidden="true">*</span></label>
+              <input id="skill" type="text" placeholder="Type a skill and press Enter" data-skill-input data-skip-validate aria-describedby="skill-error" />
+              <span class="field__line"></span>
+            </div>
+            <button type="button" class="btn btn--sm" data-skill-add>Add</button>
+          </div>
+          <p class="field__error" id="skill-error" data-skill-error style="color:var(--error-on-light)"></p>
+          <ul class="skills" role="list" data-skill-list aria-label="Added skills"></ul>
+        </fieldset>
+
+        <fieldset class="form-section" style="border:0;padding-inline:0;padding-bottom:0">
+          <legend class="fieldset-title">Resume</legend>
+          <div class="field">
+            <label for="resume" class="dropzone" data-dropzone>
+              <Icon name="upload" />
+              <span><strong>Click to upload</strong> or drag your resume here <span class="req" aria-hidden="true">*</span></span>
+              <small>PDF, DOC or DOCX, max 5 MB</small>
+              <small data-file-name style="color:var(--black);font-weight:600"></small>
+            </label>
+            <input id="resume" name="resume" type="file" accept=".pdf,.doc,.docx" required class="sr-only" data-label="Resume" />
+          </div>
+        </fieldset>
+
+        <div class="form__status" data-status role="status" aria-live="polite" tabindex="-1" style="margin-top:2rem"></div>
+        <div class="form__foot" style="margin-top:2rem">
+          <a href="/careers/" class="link-arrow">Cancel</a>
+          <Button type="submit" magnetic={false}>Submit application</Button>
+        </div>
+      </form>
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,50 @@
+---
+import Base from '../../layouts/Base.astro';
+import Icon from '../../components/Icon.astro';
+import { site } from '../../data/site';
+---
+<Base title="Article" description="An article from the IRA Hospitality blog." headerTheme="light" label="Blog" noindex>
+  <section class="proj-hero theme-light" data-theme-section="light">
+    <div class="container" data-post data-api={site.apiBase}>
+      <a href="/blogs/" class="back-link"><Icon name="arrow-left" />Back to blog</a>
+      <p class="eyebrow" data-post-date></p>
+      <h1 class="proj-hero__title" style="margin-top:1.5rem;font-size:clamp(2.25rem,1rem + 4vw,5.5rem)" data-post-title>Loading…</h1>
+    </div>
+  </section>
+  <section class="section theme-light" data-theme-section="light" style="padding-top:0">
+    <div class="container">
+      <div class="media" style="aspect-ratio:16/8;margin-bottom:clamp(2rem,5vw,4rem)" data-post-image hidden></div>
+      <div class="post-body" data-post-body></div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-post]')!;
+  const slug = new URLSearchParams(location.search).get('slug');
+  const title = root.querySelector<HTMLElement>('[data-post-title]')!;
+  const body = document.querySelector<HTMLElement>('[data-post-body]')!;
+  const imgBox = document.querySelector<HTMLElement>('[data-post-image]')!;
+  const date = root.querySelector<HTMLElement>('[data-post-date]')!;
+  (async () => {
+    try {
+      if (!slug) throw new Error('missing slug');
+      const res = await fetch(`${root.dataset.api}/blogs/${encodeURIComponent(slug)}?incrementView=true`);
+      if (!res.ok) throw new Error('not found');
+      const data = await res.json();
+      const post = data.blog ?? data;
+      title.textContent = post.title;
+      document.title = `${post.title} | IRA Hospitality`;
+      body.textContent = post.description ?? '';
+      if (post.createdAt) date.textContent = new Date(post.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+      if (typeof post.image === 'string' && /^https:\/\//i.test(post.image)) {
+        const img = document.createElement('img');
+        img.src = post.image; img.alt = '';
+        imgBox.appendChild(img); imgBox.hidden = false;
+      }
+    } catch {
+      title.textContent = 'Article not found';
+      body.textContent = 'This article doesn’t exist or has been removed.';
+    }
+  })();
+</script>
