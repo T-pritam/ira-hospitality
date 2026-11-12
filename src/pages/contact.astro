@@ -25,10 +25,11 @@ const jsonLd = {
     <Fragment slot="lead">Ready to take your brand to the next level? Tell us about your project.</Fragment>
   </PageHero>
 
-  <section class="section theme-navy hairlines" id="contact-form" data-theme-section="dark" aria-labelledby="talk-title">
+  <section class="section theme-soft" id="contact-form" data-theme-section="light" aria-labelledby="talk-title" style="overflow:clip">
+    <div class="aurora aurora--low" aria-hidden="true" data-aurora><i></i><i></i><i></i></div>
     <div class="container contact-grid">
       <div>
-        <h2 class="h2" id="talk-title" data-split>Let’s <span class="light muted">Talk</span></h2>
+        <h2 class="h2" id="talk-title" data-split>Let’s <span class="light">Talk</span></h2>
         <dl class="contact-list" data-reveal>
           <div><dt>Call us</dt><dd><a href={site.phoneHref}>{site.phone}</a></dd></div>
           <div><dt>Email</dt><dd><a href={`mailto:${site.email}`}>{site.email}</a></dd></div>

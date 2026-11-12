@@ -2,7 +2,6 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText } from 'gsap/SplitText';
 import Lenis from 'lenis';
-import { initDodecas } from './dodeca';
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
@@ -109,68 +108,54 @@ if (burger && menu) {
 toTop?.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); scrollToTarget(0); document.getElementById('main')?.focus({ preventScroll: true }); });
 
 /* ------------------------------------------------------------------ */
-/* Wireframe dodecahedrons                                             */
-/* ------------------------------------------------------------------ */
-initDodecas(motion, () => lenis?.velocity ?? 0);
-
-/* ------------------------------------------------------------------ */
 /* Reveal system                                                       */
 /* ------------------------------------------------------------------ */
-function splitLines(el: HTMLElement, opts: { delay?: number; trigger?: boolean } = {}) {
-  return SplitText.create(el, {
-    type: 'lines',
-    mask: 'lines',
-    linesClass: 'split-line',
-    aria: 'none',
-    autoSplit: true,
-    onSplit(self) {
-      gsap.set(el, { visibility: 'visible' });
-      return gsap.from(self.lines, {
-        yPercent: 110,
-        duration: 1.25,
-        ease: 'expo.out',
-        stagger: 0.09,
-        delay: opts.delay ?? 0,
-        scrollTrigger: opts.trigger === false ? undefined : { trigger: el, start: 'top 88%', once: true },
-      });
-    },
-  });
+const WORD_FROM = { opacity: 0, yPercent: 60, filter: 'blur(12px)' };
+const WORD_TO = { opacity: 1, yPercent: 0, filter: 'blur(0px)', duration: 1.1, ease: 'expo.out', stagger: 0.045 };
+
+// Headlines arrive word by word, coming into focus as they rise.
+function splitWords(el: HTMLElement) {
+  const split = SplitText.create(el, { type: 'words', wordsClass: 'split-word', aria: 'none' });
+  gsap.set(el, { visibility: 'visible' });
+  gsap.set(split.words, WORD_FROM);
+  return split.words as HTMLElement[];
 }
 
 function initReveals() {
-  // Line-by-line headline reveals
-  $$('[data-split]:not([data-split="intro"])').forEach((el) => splitLines(el));
+  $$('[data-split]:not([data-split="intro"])').forEach((el) => {
+    const words = splitWords(el);
+    ScrollTrigger.create({
+      trigger: el, start: 'top 88%', once: true,
+      onEnter: () => gsap.to(words, { ...WORD_TO, clearProps: 'filter' }),
+    });
+  });
 
-  // Fade-up blocks, batched for natural staggering
+  // Blocks rise and sharpen, batched for natural staggering
+  gsap.set('[data-reveal]:not([data-reveal="fade"])', { filter: 'blur(10px)' });
+  const show = (els: Element[], duration = 1.1) => gsap.to(els, { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)', duration, ease: 'expo.out', stagger: 0.09, overwrite: true, clearProps: 'filter' });
   ScrollTrigger.batch('[data-reveal]', {
     start: 'top 90%',
     once: true,
-    onEnter: (els) => gsap.to(els, { opacity: 1, y: 0, duration: 1.1, ease: 'expo.out', stagger: 0.1, overwrite: true }),
+    onEnter: (els) => show(els),
     // Elements skipped over by a fast jump (anchor links, back-to-top) still end up visible
-    onLeave: (els) => gsap.to(els, { opacity: 1, y: 0, duration: 0.6, overwrite: true }),
-    onEnterBack: (els) => gsap.to(els, { opacity: 1, y: 0, duration: 0.8, ease: 'expo.out', overwrite: true }),
+    onLeave: (els) => show(els, 0.6),
+    onEnterBack: (els) => show(els, 0.8),
   });
 
-  // Image curtain reveals
+  // Frames grow into place as they scroll into view
   $$('[data-clip]').forEach((el) => {
-    const img = el.querySelector('img');
-    const tl = gsap.timeline({ scrollTrigger: { trigger: el, start: 'top 85%', once: true } });
-    tl.to(el, { clipPath: 'inset(0% 0 0 0)', duration: 1.5, ease: 'expo.inOut' });
-    if (img && !img.hasAttribute('data-parallax')) tl.from(img, { scale: 1.25, duration: 1.8, ease: 'expo.out' }, 0.1);
+    gsap.fromTo(el, { scale: 0.9, opacity: 0 }, {
+      scale: 1, opacity: 1, ease: 'power2.out',
+      scrollTrigger: { trigger: el, start: 'top 98%', end: 'top 55%', scrub: 0.6 },
+    });
   });
 
   // Word-by-word statement that "reads itself" while scrolling
   $$('[data-words]').forEach((el) => {
-    SplitText.create(el, {
-      type: 'words',
-      aria: 'none',
-      autoSplit: true,
-      onSplit(self) {
-        return gsap.fromTo(self.words, { opacity: 0.14 }, {
-          opacity: 1, ease: 'none', stagger: 0.1,
-          scrollTrigger: { trigger: el, start: 'top 80%', end: 'bottom 55%', scrub: true },
-        });
-      },
+    const split = SplitText.create(el, { type: 'words', aria: 'none' });
+    gsap.fromTo(split.words, { opacity: 0.18 }, {
+      opacity: 1, ease: 'none', stagger: 0.1,
+      scrollTrigger: { trigger: el, start: 'top 82%', end: 'bottom 55%', scrub: true },
     });
   });
 
@@ -190,22 +175,81 @@ function initReveals() {
       scrollTrigger: { trigger: el.closest('section') || el, start: 'top bottom', end: 'bottom top', scrub: true },
     });
   });
+
+  // The soft light behind each section drifts with the scroll
+  $$('[data-aurora]').forEach((el) => {
+    gsap.fromTo(el, { yPercent: -8 }, {
+      yPercent: 14, ease: 'none',
+      scrollTrigger: { trigger: el.parentElement, start: 'top bottom', end: 'bottom top', scrub: true },
+    });
+  });
+
+  // Glass service tiles rise one after another
+  $$('[data-bento]').forEach((grid) => {
+    const cards = $$(':scope > *', grid);
+    gsap.set(cards, { opacity: 0, y: 70, scale: 0.94 });
+    ScrollTrigger.batch(cards, {
+      start: 'top 92%', once: true,
+      onEnter: (els) => gsap.to(els, { opacity: 1, y: 0, scale: 1, duration: 1.2, ease: 'expo.out', stagger: 0.12, clearProps: 'transform' }),
+    });
+  });
+
+  // Numbers count up once
+  $$('[data-count]').forEach((el) => {
+    const m = el.textContent!.trim().match(/^(\d+)(\D*)$/);
+    if (!m) return;
+    const state = { v: 0 };
+    const end = Number(m[1]);
+    ScrollTrigger.create({
+      trigger: el, start: 'top 90%', once: true,
+      onEnter: () => gsap.to(state, { v: end, duration: 1.6, ease: 'power2.out', onUpdate: () => { el.textContent = Math.round(state.v) + m[2]; } }),
+    });
+  });
 }
 
 /* ------------------------------------------------------------------ */
-/* Magnetic buttons                                                    */
+/* Home hero: a hand of cards that fans out as you scroll              */
 /* ------------------------------------------------------------------ */
-function initMagnetic() {
+function initHero() {
+  const hero = document.querySelector<HTMLElement>('[data-hero]');
+  const fan = hero?.querySelector<HTMLElement>('[data-fan]');
+  if (!hero || !fan) return;
+  const cards = $$('.fan__card', fan);
+  const mid = (cards.length - 1) / 2;
+  gsap.fromTo(cards,
+    { rotation: (i) => (i - mid) * 7, xPercent: (i) => (i - mid) * -34, y: (i) => Math.abs(i - mid) * 26, transformOrigin: '50% 120%' },
+    {
+      rotation: 0, xPercent: 0, y: (i) => (i % 2 ? 36 : 0), ease: 'none',
+      scrollTrigger: { trigger: hero, start: 'top top', end: () => `+=${Math.max(320, fan.offsetTop + fan.offsetHeight * 0.4 - window.innerHeight * 0.45)}`, scrub: 0.7, invalidateOnRefresh: true },
+    });
+  gsap.to(hero.querySelector('.hero__inner'), {
+    yPercent: -6, opacity: 0.35, ease: 'none',
+    scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom 35%', scrub: true },
+  });
+}
+
+/* ------------------------------------------------------------------ */
+/* Pointer effects                                                     */
+/* ------------------------------------------------------------------ */
+function initPointer() {
   if (!finePointer) return;
   $$('[data-magnetic]').forEach((el) => {
     const xTo = gsap.quickTo(el, 'x', { duration: 0.6, ease: 'power3.out' });
     const yTo = gsap.quickTo(el, 'y', { duration: 0.6, ease: 'power3.out' });
     el.addEventListener('pointermove', (e) => {
       const r = el.getBoundingClientRect();
-      xTo((e.clientX - r.left - r.width / 2) * 0.18);
-      yTo((e.clientY - r.top - r.height / 2) * 0.3);
+      xTo((e.clientX - r.left - r.width / 2) * 0.14);
+      yTo((e.clientY - r.top - r.height / 2) * 0.22);
     });
     el.addEventListener('pointerleave', () => { xTo(0); yTo(0); });
+  });
+  // A warm highlight follows the pointer across glass tiles
+  $$('[data-glow]').forEach((el) => {
+    el.addEventListener('pointermove', (e) => {
+      const r = el.getBoundingClientRect();
+      el.style.setProperty('--mx', `${e.clientX - r.left}px`);
+      el.style.setProperty('--my', `${e.clientY - r.top}px`);
+    });
   });
 }
 
@@ -221,36 +265,23 @@ function intro() {
 
   const tl = gsap.timeline();
   if (showPre && pre) {
-    const logo = pre.querySelector('.preloader__logo img');
+    const logo = pre.querySelector('.preloader__logo');
     const bar = pre.querySelector('.preloader__bar span');
-    tl.from(logo, { yPercent: 105, duration: 0.75, ease: 'expo.out' })
+    tl.from(logo, { opacity: 0, scale: 0.92, filter: 'blur(10px)', duration: 0.7, ease: 'expo.out' })
       .to(bar, { scaleX: 1, duration: 0.7, ease: 'power2.inOut' }, 0.1)
-      .to(logo, { yPercent: -105, duration: 0.5, ease: 'expo.in' })
-      .to(pre, { clipPath: 'inset(0 0 100% 0)', duration: 0.9, ease: 'expo.inOut' }, '-=0.2')
+      .to(pre, { opacity: 0, duration: 0.6, ease: 'power2.out' })
       .set(pre, { display: 'none' });
   } else if (pre) {
     pre.style.display = 'none';
   }
-  const start = showPre ? '-=0.55' : 0;
-  const label = 'heroIn';
-  tl.add(label, start);
+  tl.add('heroIn', showPre ? '-=0.45' : 0);
   introEls.forEach((el, i) => {
-    SplitText.create(el, {
-      type: 'lines', mask: 'lines', linesClass: 'split-line', autoSplit: true, aria: 'none',
-      onSplit(self) {
-        gsap.set(el, { visibility: 'visible' });
-        const anim = gsap.from(self.lines, { yPercent: 115, duration: 1.4, ease: 'expo.out', stagger: 0.1 });
-        // First split joins the intro timeline; re-splits (on resize) just render the final state.
-        if (!(el as any).__introDone) { (el as any).__introDone = true; tl.add(anim, `${label}+=${i * 0.15}`); }
-        else anim.progress(1);
-        return anim;
-      },
-    });
+    tl.to(splitWords(el), { ...WORD_TO, duration: 1.3, stagger: 0.06, clearProps: 'filter' }, `heroIn+=${i * 0.15}`);
   });
   if (introFades.length) {
-    tl.fromTo(introFades, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 1.2, ease: 'expo.out', stagger: 0.1 }, `${label}+=0.45`);
+    tl.fromTo(introFades, { opacity: 0, y: 28, filter: 'blur(10px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 1.2, ease: 'expo.out', stagger: 0.09, clearProps: 'filter,transform' }, 'heroIn+=0.35');
   }
-  tl.from('[data-header]', { yPercent: -100, opacity: 0, duration: 1, ease: 'expo.out', clearProps: 'transform,opacity' }, `${label}+=0.2`);
+  tl.from('[data-header]', { yPercent: -130, duration: 1.1, ease: 'expo.out', clearProps: 'transform' }, 'heroIn+=0.1');
 }
 
 /* ------------------------------------------------------------------ */
@@ -259,14 +290,14 @@ function intro() {
 async function boot() {
   if (motion) {
     await Promise.race([document.fonts.ready, new Promise((r) => setTimeout(r, 1500))]);
+    initHero();
     intro();
     initReveals();
-    initMagnetic();
+    initPointer();
   }
   root.classList.add('motion-ready');
 
   // Feature modules load only on pages that use them
-  if (document.querySelector('[data-stack]')) import('./modules/stack').then((m) => m.init(motion));
   if (document.querySelector('[data-reel]')) import('./modules/reel').then((m) => m.init(motion, lenis));
   if (document.querySelector('[data-voices]')) import('./modules/voices').then((m) => m.init(motion));
   if (document.querySelector('[data-accordion]')) import('./modules/accordion').then((m) => m.init());

@@ -1,20 +1,18 @@
 ---
 import { Image } from 'astro:assets';
 import logoGold from '../assets/logo-gold.png';
-import logoGrey from '../assets/logo-grey.png';
 import Button from './Button.astro';
 import { mainNav, menuNav, usefulLinks, site } from '../data/site';
 
 interface Props { theme?: 'dark' | 'light' }
-const { theme = 'dark' } = Astro.props;
+const { theme = 'light' } = Astro.props;
 const path = Astro.url.pathname.replace(/\/?$/, '/');
 const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWith(href));
 ---
 <header class="site-header" data-on={theme} data-header>
-  <div class="container site-header__bar">
+  <div class="site-header__bar">
     <a href="/" class="logo" aria-label="IRA Hospitality, home">
-      <Image src={logoGold} alt="" class="logo--gold" width={228} height={140} format="webp" loading="eager" fetchpriority="high" />
-      <Image src={logoGrey} alt="" class="logo--grey" width={228} height={140} format="webp" loading="eager" />
+      <Image src={logoGold} alt="" width={228} height={140} format="webp" loading="eager" fetchpriority="high" />
     </a>
 
     <nav class="nav-desktop" aria-label="Main">
@@ -37,7 +35,7 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
     <ul class="menu__list" role="list">
       {menuNav.map((l, i) => (
         <li class="menu__item">
-          <a href={l.href} aria-current={isCurrent(l.href) ? 'page' : undefined} style={`transition-delay:${0.15 + i * 0.05}s`}>
+          <a href={l.href} aria-current={isCurrent(l.href) ? 'page' : undefined} style={`transition-delay:${0.08 + i * 0.05}s`}>
             {l.label}<small>0{i + 1}</small>
           </a>
         </li>
