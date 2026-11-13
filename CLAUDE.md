@@ -42,6 +42,7 @@ The old site is the source for **content and page flow only**. Its look (black c
 - **Type:** two voices. Inter (weight 560, tight tracking) for the emphasised words; the `.light` words, eyebrows, numerals and pull quotes answer in Instrument Serif italic (`--serif`). Sentence case, no uppercase labels.
 - **Shape:** moderate radii (`--radius-lg` tops out at 1.5rem), pill buttons, generous space. Section heads (`.section-head`) are left-aligned and split: heading left, supporting text right.
 - **Home hero:** a dark rounded tile filling the first screen. Behind the text, `threads.ts` draws slow threads of gold light on a canvas. Masthead line with a rule, a staggered two-line headline with a hand-drawn orange stroke under the last word (`.mark`), lede and buttons to the right, then the **ring**: 14 captioned, linked project cards set around a cylinder and seen from inside, so the work wraps the full width at any screen size. It turns slowly, can be dragged, and speeds up with scroll (`initHero` in `main.ts`).
+- **Services on the home page** are a quiet index (`.svc-index`): one ruled line per service with a serif numeral, title, one-line summary and topics. No large empty tiles; there is no imagery for services. Rows are wiped in on scroll (`data-rows`) and a lit sheet of glass slides in behind the hovered row.
 - **Header glass:** champagne-tinted on light sections and amber smoked glass on dark ones, so it never reads as a plain white bar.
 - One idea per screen, calm motion.
 

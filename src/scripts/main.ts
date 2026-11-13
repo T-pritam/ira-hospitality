@@ -259,6 +259,16 @@ function initReveals() {
     });
   });
 
+  // Index rows: each one is wiped in from the left as it rises
+  $$('[data-rows]').forEach((list) => {
+    const rows = $$(':scope > li', list);
+    gsap.set(rows, { opacity: 0, y: 36, clipPath: 'inset(0 100% 0 0)' });
+    ScrollTrigger.batch(rows, {
+      start: 'top 92%', once: true,
+      onEnter: (els) => gsap.to(els, { opacity: 1, y: 0, clipPath: 'inset(0 0% 0 0)', duration: 1.2, ease: 'expo.out', stagger: 0.1, clearProps: 'clipPath,transform' }),
+    });
+  });
+
   // Glass service tiles rise one after another
   $$('[data-bento]').forEach((grid) => {
     const cards = $$(':scope > *', grid);
