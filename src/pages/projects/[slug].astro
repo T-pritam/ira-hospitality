@@ -104,10 +104,10 @@ const jsonLd = [
     </div>
   </section>
 
-  <a href={`/projects/${next.slug}/`} class="proj-next theme-soft tile" data-theme-section="light">
+  <a href={`/projects/${next.slug}/`} class="proj-next theme-soft tile" data-theme-section="light" data-cursor="Next">
     <div class="container">
       <span class="eyebrow proj-next__label">Next project</span>
-      <span class="proj-next__title" style="display:block">{next.name.split(' | ')[0]}</span>
+      <span class="proj-next__title" style="display:block" data-chars>{next.name.split(' | ')[0]}</span>
     </div>
     <span class="round-arrow" aria-hidden="true"><Icon name="arrow-right" /></span>
   </a>

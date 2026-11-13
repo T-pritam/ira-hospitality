@@ -14,6 +14,23 @@ export function init(motion: boolean, lenis: Lenis | null) {
   mm.add('(min-width: 900px)', () => {
     section.classList.add('is-pinned');
     const distance = () => Math.max(0, track.scrollWidth - section.clientWidth);
+    // Cards turn slightly towards the centre of the screen, like a carousel seen from inside
+    const items = Array.from(track.querySelectorAll<HTMLElement>('.reel__item'));
+    const index = section.querySelector<HTMLElement>('[data-reel-index]');
+    gsap.set(items, { transformPerspective: 1200 });
+    const shape = () => {
+      const vw = window.innerWidth;
+      let best = 0, bestD = Infinity;
+      items.forEach((item, i) => {
+        const r = item.getBoundingClientRect();
+        const d = (r.left + r.width / 2 - vw / 2) / vw;
+        const c = Math.max(-1, Math.min(1, d));
+        gsap.set(item, { rotationY: c * -16, scale: 1 - Math.abs(c) * 0.07 });
+        if (Math.abs(d) < bestD) { bestD = Math.abs(d); best = i; }
+      });
+      if (index) index.textContent = String(best + 1).padStart(2, '0');
+    };
+
     const tween = gsap.to(track, {
       x: () => -distance(),
       ease: 'none',
@@ -24,7 +41,7 @@ export function init(motion: boolean, lenis: Lenis | null) {
         pin: true,
         scrub: 0.8,
         invalidateOnRefresh: true,
-        onUpdate: (self) => { if (bar) bar.style.transform = `scaleX(${self.progress})`; },
+        onUpdate: (self) => { if (bar) bar.style.transform = `scaleX(${self.progress})`; shape(); },
       },
     });
 
@@ -47,10 +64,13 @@ export function init(motion: boolean, lenis: Lenis | null) {
       if (lenis) lenis.scrollTo(y, { immediate: true }); else window.scrollTo(0, y);
     };
     track.addEventListener('focusin', onFocus);
+    ScrollTrigger.sort();
     ScrollTrigger.refresh();
+    shape();
 
     return () => {
       section.classList.remove('is-pinned');
+      gsap.set(items, { clearProps: 'transform' });
       track.removeEventListener('focusin', onFocus);
     };
   });

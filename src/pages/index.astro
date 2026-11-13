@@ -13,6 +13,8 @@ import { founders, testimonials, clientNames } from '../data/people';
 import { site } from '../data/site';
 
 const reelProjects = projects.filter((p) => p.cover);
+const half = Math.ceil(clientNames.length / 2);
+const clientRows = [clientNames.slice(0, half), clientNames.slice(half)];
 
 // Five pieces of client work, fanned out under the headline.
 const fan = [
@@ -58,10 +60,13 @@ const fan = [
   <!-- 2 · Studio -->
   <section class="section theme-light" id="studio" data-theme-section="light" aria-labelledby="studio-title">
     <div class="container">
-      <p class="eyebrow center" data-reveal id="studio-title" style="margin-bottom:1.5rem">Discover our studio</p>
-      <p class="studio__statement" data-words>
+      <div class="pin-scene" data-pin>
+        <span class="orb" aria-hidden="true"></span>
+        <p class="eyebrow center" data-reveal id="studio-title" style="margin-bottom:1.5rem">Discover our studio</p>
+        <p class="studio__statement" data-words>
         At <strong>Ira Hospitality</strong>, we curate <strong>extraordinary hospitality experiences</strong>, with bespoke solutions that turn hotels, restaurants and lifestyle spaces into <strong>guest-centric destinations.</strong>
-      </p>
+        </p>
+      </div>
       <div class="studio__grid">
         <div class="media studio__media" data-clip>
           <Picture src={img('about-studio-team.jpg')} alt="Indian Durbar menu with gold cutlery and coaster on marble, designed by Ira Hospitality" widths={[480, 720, 1024]} sizes="(min-width: 900px) 40vw, 92vw" formats={['avif', 'webp']} class="parallax-img" data-parallax />
@@ -89,7 +94,7 @@ const fan = [
       </div>
       <div class="svc-bento" data-bento>
         {services.map((s, i) => (
-          <a href={`/services/${s.slug}/`} class="svc-card glass" data-glow>
+          <a href={`/services/${s.slug}/`} class="svc-card glass" data-glow data-tilt>
             <div class="svc-card__top">
               <span class="svc-card__num" aria-hidden="true">0{i + 1}</span>
               <span class="round-arrow" aria-hidden="true"><Icon name="arrow-right" /></span>
@@ -124,7 +129,10 @@ const fan = [
           <Button href="/projects/">View all</Button>
         </div>
       </div>
-      <div class="reel__progress" aria-hidden="true"><span></span></div>
+      <div class="reel__foot" aria-hidden="true">
+        <span class="reel__count"><b data-reel-index>01</b> / {String(reelProjects.length).padStart(2, '0')}</span>
+        <div class="reel__progress"><span></span></div>
+      </div>
     </section>
   </div>
 
@@ -198,14 +206,16 @@ const fan = [
 
     <div class="clients">
       <p class="container" data-reveal>Hotels, restaurants and brands we’ve worked with</p>
-      <div class="marquee">
-        <div class="marquee__track">
-          {[0, 1].map((k) => (
-            <div class="marquee__group" aria-hidden={k === 1 ? 'true' : undefined}>
-              {clientNames.map((n) => <span>{n}</span>)}
-            </div>
-          ))}
-        </div>
+      <div class="marquee" data-marquee>
+        {clientRows.map((row, r) => (
+          <div class="marquee__track" data-dir={r % 2 ? 1 : -1}>
+            {[0, 1, 2, 3].map((k) => (
+              <div class="marquee__group" aria-hidden={k > 0 ? 'true' : undefined}>
+                {row.map((n) => <span>{n}</span>)}
+              </div>
+            ))}
+          </div>
+        ))}
       </div>
     </div>
   </section>

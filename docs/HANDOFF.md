@@ -13,6 +13,7 @@ Rebuild irahospitality.co.in from scratch. The agency told the client the new si
 ## Status (12 Nov 2026)
 - **Visual redesign (v2) done on branch `ccr-f3b7c7c5-v9n8zg`.** The first build looked too close to the old site (same black hero, dodecahedrons, button, rail label), so the agency asked for an original look: Apple-like clear white, glassmorphism, more GSAP scroll motion, same content and flow. See "Design direction" in `CLAUDE.md`.
 - v2 verified: 80 pages build, 0 broken links, no console errors, no horizontal overflow at 390 px, reduced-motion shows everything. Lighthouse mobile (home): 97 / 97 / 100 / 100; the accessibility flag is only the scroll-scrubbed statement sampled mid-animation.
+- **v2.1 polish (13 Nov 2026):** 3D hero fan that leans to the pointer, pinned statement scene, tilting glass tiles, 3D work reel with a counter, two-row velocity-reactive client marquee, gliding nav pill, header scroll progress, "View" pointer bubble on projects, letter-mask display lines, preloader counter, page fade transitions, fine grain on the background light. Lighthouse home: mobile 96 / 97 / 100 / 100, desktop 100 / 97 / 100 / 100 (accessibility flag is still only the scrubbed statement).
 - v1 (below) is complete and on `main`. 80 static pages.
 - Verified: 0 broken internal links (`node scripts/check-links.mjs`) and no console errors on any page type. Tested at 1280, 820 and 390 px with no horizontal overflow.
 - Lighthouse on the production build:

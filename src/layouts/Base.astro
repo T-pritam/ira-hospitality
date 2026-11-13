@@ -56,6 +56,7 @@ const { title, description, image, noindex, jsonLd, headerTheme = 'light', prelo
       <div class="preloader" data-preloader aria-hidden="true">
         <div class="preloader__logo"><Image src={logoGold} alt="" width={228} height={140} format="webp" loading="eager" /></div>
         <div class="preloader__bar"><span></span></div>
+        <span class="preloader__count" data-pre-count>0</span>
       </div>
     )}
     <Header theme={headerTheme} />
@@ -64,6 +65,7 @@ const { title, description, image, noindex, jsonLd, headerTheme = 'light', prelo
     </main>
     <Footer cta={footerCta} />
     <a href="#main" class="to-top glass" data-to-top aria-label="Back to top"><Icon name="arrow-up" /></a>
+    <div class="cursor" data-cursor-el aria-hidden="true"><span class="cursor__dot"><span data-cursor-label></span></span></div>
     <script>
       import '../scripts/main';
     </script>

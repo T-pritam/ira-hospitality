@@ -59,6 +59,10 @@ The old site is the source for **content and page flow only**. Its look (black c
   - `data-words` (word opacity scrubbed by scroll)
   - `data-aurora` (background light drifts with scroll), `data-bento` (children rise in a stagger), `data-glow` (pointer-following highlight), `data-count` (number counts up), `data-drift`
   - `data-hero` + `data-fan` (home hero: the hand of work cards fans out as you scroll)
+  - `data-pin` around a `data-words` statement (the statement pins mid-screen while it lights up; put a `.orb` inside for the glow)
+  - `data-chars` (large display line, letters rise out of a mask), `data-tilt` (tile leans towards the pointer), `data-cursor="View"` (pointer bubble with that label), `data-marquee` (rows drift and speed up with scroll velocity; each `.marquee__track` holds 4 copies and a `data-dir`)
+- Pinned scenes shift everything below them. After creating triggers, `main.ts` and `reel.ts` call `ScrollTrigger.sort()` then `refresh()`; keep that when adding a pin.
+- Internal links fade the page out before navigating (`html.is-leaving`); the header nav pill and scroll progress line are driven from `main.ts`.
 - Do not put a CSS `transition` on `transform` for anything GSAP animates (it makes scrubbing lag).
 - `data-theme-section="dark|light"` on each section tells the fixed header which colour to use.
 - SplitText must keep `aria: 'none'` (otherwise it adds `aria-label` to `<p>`/`<h*>`, which fails Lighthouse).
