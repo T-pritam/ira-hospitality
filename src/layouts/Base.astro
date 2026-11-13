@@ -1,7 +1,9 @@
 ---
 import '@fontsource-variable/inter/wght.css';
+import '@fontsource/instrument-serif/400-italic.css';
 import '../styles/global.css';
 import interLatin from '@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url';
+import serifItalic from '@fontsource/instrument-serif/files/instrument-serif-latin-400-italic.woff2?url';
 import SEO from '../components/SEO.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
@@ -30,9 +32,10 @@ const { title, description, image, noindex, jsonLd, headerTheme = 'light', prelo
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#fbfbfd" />
+    <meta name="theme-color" content="#faf8f4" />
     <meta name="color-scheme" content="light" />
     <link rel="preload" href={interLatin} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={serifItalic} as="font" type="font/woff2" crossorigin />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />

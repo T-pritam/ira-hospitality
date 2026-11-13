@@ -448,6 +448,9 @@ function intro() {
   if (introFades.length) {
     tl.fromTo(introFades, { opacity: 0, y: 28, filter: 'blur(10px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 1.2, ease: 'expo.out', stagger: 0.08, clearProps: 'filter,transform' }, 'heroIn+=0.2');
   }
+  // The hand-drawn stroke under the last word draws itself
+  const stroke = document.querySelector('.mark path');
+  if (stroke) tl.to(stroke, { strokeDashoffset: 0, duration: 1.1, ease: 'power2.inOut' }, 'heroIn+=0.95');
   // Home: the work cards are dealt in from the middle outwards
   const dealt = $$('[data-fan] .fan__card picture');
   if (dealt.length) tl.from(dealt, { yPercent: 105, scale: 1.25, duration: 1.4, ease: 'expo.out', stagger: { each: 0.09, from: 'center' }, clearProps: 'transform' }, 'heroIn+=0.3');
