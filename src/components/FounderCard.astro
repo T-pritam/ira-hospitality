@@ -8,7 +8,7 @@ const { founder: f, id, brands = true } = Astro.props;
 <article class="founder" aria-labelledby={id}>
   <div class="founder__media media" data-clip>
     <Picture src={img(f.photo)} alt={`Portrait of ${f.name}, ${f.role} of Ira Hospitality`} widths={[480, 720, 960]} sizes="(min-width: 860px) 46vw, 92vw" formats={['avif', 'webp']} class="parallax-img" data-parallax />
-    <div class="founder__plate glass-dark">
+    <div class="founder__plate glass-dark" data-reveal>
       <h3 class="founder__name" id={id}>{f.name}</h3>
       <p class="founder__role">{f.role}</p>
     </div>

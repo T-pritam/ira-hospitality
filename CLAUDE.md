@@ -62,6 +62,9 @@ The old site is the source for **content and page flow only**. Its look (black c
   - `data-pin` around a `data-words` statement (the statement pins mid-screen while it lights up; put a `.orb` inside for the glow)
   - `data-chars` (large display line, letters rise out of a mask), `data-tilt` (tile leans towards the pointer), `data-cursor="View"` (pointer bubble with that label), `data-marquee` (rows drift and speed up with scroll velocity; each `.marquee__track` holds 4 copies and a `data-dir`)
 - Pinned scenes shift everything below them. After creating triggers, `main.ts` and `reel.ts` call `ScrollTrigger.sort()` then `refresh()`; keep that when adding a pin.
+- The header bar is "liquid glass": a gradient rim (`::before`), a highlight that travels with scroll and pointer (`--sheen`), and it condenses once scrolled. It must reappear the moment the page scrolls up (see `onScroll` in `main.ts`); keep its transform transition short.
+- Keep the first paint fast: the intro waits at most 350 ms for fonts, the preloader runs about a second, and all links prefetch on hover (`prefetchAll`).
+- `data-zoom` (gallery image settles into its frame), `data-hero-fade` (inner-page hero eases back on scroll).
 - Internal links fade the page out before navigating (`html.is-leaving`); the header nav pill and scroll progress line are driven from `main.ts`.
 - Do not put a CSS `transition` on `transform` for anything GSAP animates (it makes scrubbing lag).
 - `data-theme-section="dark|light"` on each section tells the fixed header which colour to use.

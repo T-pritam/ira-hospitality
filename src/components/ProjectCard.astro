@@ -6,7 +6,7 @@ import type { Project } from '../data/projects';
 interface Props { project: Project; eager?: boolean; sizes?: string; reveal?: boolean }
 const { project: p, eager = false, sizes = '(min-width: 1100px) 30vw, (min-width: 640px) 45vw, 92vw', reveal = true } = Astro.props;
 ---
-<a href={`/projects/${p.slug}/`} class="pcard" data-cursor="View" data-reveal={reveal ? '' : undefined}>
+<a href={`/projects/${p.slug}/`} class="pcard" data-cursor="View" data-reveal={reveal ? '' : undefined} data-tilt={reveal ? '' : undefined}>
   <div class="pcard__media">
     {p.cover ? (
       <Picture src={img(p.cover)} alt="" widths={[400, 640, 900, 1200]} sizes={sizes} formats={['avif', 'webp']} loading={eager ? 'eager' : 'lazy'} />

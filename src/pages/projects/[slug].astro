@@ -81,13 +81,13 @@ const jsonLd = [
       {p.gallery.length ? (
         <div class="gallery">
           {segments.map((seg) => seg.full ? (
-            <figure class="gallery__item" data-reveal>
+            <figure class="gallery__item" data-reveal data-zoom>
               <Picture src={img(seg.items[0].src)} alt={seg.items[0].alt} widths={[640, 1024, 1600]} sizes="(min-width: 1300px) 1240px, 92vw" formats={['avif', 'webp']} loading="lazy" />
             </figure>
           ) : (
             <div class="gallery__cols">
               {seg.items.map((g) => (
-                <figure class="gallery__item" data-reveal>
+                <figure class="gallery__item" data-reveal data-zoom>
                   <Picture src={img(g.src)} alt={g.alt} widths={[480, 800, 1100]} sizes="(min-width: 700px) 46vw, 92vw" formats={['avif', 'webp']} loading="lazy" />
                 </figure>
               ))}

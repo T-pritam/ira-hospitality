@@ -15,7 +15,7 @@ const $$ = <T extends Element = HTMLElement>(sel: string, ctx: ParentNode = docu
 /* ------------------------------------------------------------------ */
 let lenis: Lenis | null = null;
 if (motion) {
-  lenis = new Lenis({ duration: 1.15, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), anchors: false });
+  lenis = new Lenis({ lerp: 0.115, anchors: false });
   lenis.on('scroll', ScrollTrigger.update);
   gsap.ticker.add((time) => lenis!.raf(time * 1000));
   gsap.ticker.lagSmoothing(0);
@@ -52,11 +52,17 @@ const toTop = document.querySelector<HTMLElement>('[data-to-top]');
 const progress = document.querySelector<HTMLElement>('[data-progress]');
 if (header) {
   let lastY = window.scrollY;
+  let down = 0;
+  const bar = header.querySelector<HTMLElement>('.site-header__bar');
   const onScroll = () => {
     const y = window.scrollY;
     const menuOpen = root.classList.contains('menu-open');
     header.classList.toggle('is-scrolled', y > 40);
-    if (!menuOpen) header.classList.toggle('is-hidden', y > lastY && y > 300);
+    // Comes back the moment the page moves up; only tucks away after a real scroll down
+    if (y < lastY || y < 300) { down = 0; header.classList.remove('is-hidden'); }
+    else if (!menuOpen) { down += y - lastY; if (down > 90) header.classList.add('is-hidden'); }
+    // The highlight on the glass travels with the scroll
+    if (bar && !bar.matches(':hover')) bar.style.setProperty('--sheen', `${8 + 84 * Math.min(1, y / Math.max(1, document.documentElement.scrollHeight - window.innerHeight))}%`);
     toTop?.classList.toggle('is-visible', y > window.innerHeight);
     if (progress) progress.style.transform = `scaleX(${Math.min(1, y / Math.max(1, document.documentElement.scrollHeight - window.innerHeight))})`;
     lastY = y;
@@ -65,6 +71,7 @@ if (header) {
   else window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
   header.addEventListener('focusin', () => header.classList.remove('is-hidden'));
+  bar?.addEventListener('pointermove', (e) => { const r = bar.getBoundingClientRect(); bar.style.setProperty('--sheen', `${((e.clientX - r.left) / r.width) * 100}%`); });
 
   $$('[data-theme-section]').forEach((section) => {
     ScrollTrigger.create({
@@ -148,7 +155,7 @@ if (motion) {
     if (url.pathname === location.pathname && url.search === location.search) return;
     e.preventDefault();
     root.classList.add('is-leaving');
-    setTimeout(() => { location.href = url.href; }, 330);
+    setTimeout(() => { location.href = url.href; }, 160);
   });
   window.addEventListener('pageshow', (e) => { if (e.persisted) root.classList.remove('is-leaving'); });
 }
@@ -260,6 +267,18 @@ function initReveals() {
       start: 'top 92%', once: true,
       onEnter: (els) => gsap.to(els, { opacity: 1, y: 0, scale: 1, rotationX: 0, duration: 1.3, ease: 'expo.out', stagger: 0.12, clearProps: 'transform' }),
     });
+  });
+
+  // Gallery images settle into their frames
+  $$('[data-zoom]').forEach((el) => {
+    const img = el.querySelector('img');
+    if (!img) return;
+    gsap.fromTo(img, { scale: 1.22 }, { scale: 1, ease: 'none', scrollTrigger: { trigger: el, start: 'top bottom', end: 'top 35%', scrub: 0.6 } });
+  });
+
+  // Inner-page heroes ease back as the content arrives
+  $$('[data-hero-fade]').forEach((el) => {
+    gsap.to(el, { yPercent: -8, opacity: 0.3, scale: 0.97, ease: 'none', scrollTrigger: { trigger: el.parentElement, start: 'top top', end: 'bottom 30%', scrub: true } });
   });
 
   // Numbers count up once
@@ -414,21 +433,24 @@ function intro() {
     const bar = pre.querySelector('.preloader__bar span');
     const count = pre.querySelector<HTMLElement>('[data-pre-count]');
     const n = { v: 0 };
-    tl.from(logo, { opacity: 0, scale: 0.92, filter: 'blur(10px)', duration: 0.7, ease: 'expo.out' })
-      .to(bar, { scaleX: 1, duration: 0.8, ease: 'power2.inOut' }, 0.1)
-      .to(n, { v: 100, duration: 0.8, ease: 'power2.inOut', onUpdate: () => { if (count) count.textContent = String(Math.round(n.v)); } }, 0.1)
-      .to(pre, { opacity: 0, duration: 0.6, ease: 'power2.out' })
+    tl.from(logo, { opacity: 0, scale: 0.92, filter: 'blur(10px)', duration: 0.45, ease: 'expo.out' })
+      .to(bar, { scaleX: 1, duration: 0.6, ease: 'power2.inOut' }, 0.05)
+      .to(n, { v: 100, duration: 0.6, ease: 'power2.inOut', onUpdate: () => { if (count) count.textContent = String(Math.round(n.v)); } }, 0.05)
+      .to(pre, { opacity: 0, duration: 0.4, ease: 'power2.out' })
       .set(pre, { display: 'none' });
   } else if (pre) {
     pre.style.display = 'none';
   }
-  tl.add('heroIn', showPre ? '-=0.45' : 0);
+  tl.add('heroIn', showPre ? '-=0.35' : 0);
   introEls.forEach((el, i) => {
-    tl.to(splitWords(el), { ...WORD_TO, duration: 1.3, stagger: 0.06, clearProps: 'filter' }, `heroIn+=${i * 0.15}`);
+    tl.to(splitWords(el), { ...WORD_TO, duration: 1.15, stagger: 0.05, clearProps: 'filter' }, `heroIn+=${i * 0.12}`);
   });
   if (introFades.length) {
-    tl.fromTo(introFades, { opacity: 0, y: 28, filter: 'blur(10px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 1.2, ease: 'expo.out', stagger: 0.09, clearProps: 'filter,transform' }, 'heroIn+=0.35');
+    tl.fromTo(introFades, { opacity: 0, y: 28, filter: 'blur(10px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 1.2, ease: 'expo.out', stagger: 0.08, clearProps: 'filter,transform' }, 'heroIn+=0.2');
   }
+  // Home: the work cards are dealt in from the middle outwards
+  const dealt = $$('[data-fan] .fan__card picture');
+  if (dealt.length) tl.from(dealt, { yPercent: 105, scale: 1.25, duration: 1.4, ease: 'expo.out', stagger: { each: 0.09, from: 'center' }, clearProps: 'transform' }, 'heroIn+=0.3');
   tl.from('[data-header]', { yPercent: -130, duration: 1.1, ease: 'expo.out', clearProps: 'transform' }, 'heroIn+=0.1');
 }
 
@@ -437,7 +459,7 @@ function intro() {
 /* ------------------------------------------------------------------ */
 async function boot() {
   if (motion) {
-    await Promise.race([document.fonts.ready, new Promise((r) => setTimeout(r, 1500))]);
+    await Promise.race([document.fonts.ready, new Promise((r) => setTimeout(r, 350))]);
     initHero();
     intro();
     initReveals();

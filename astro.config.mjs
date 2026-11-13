@@ -12,5 +12,5 @@ export default defineConfig({
     }),
   ],
   image: { responsiveStyles: false },
-  prefetch: { prefetchAll: false, defaultStrategy: 'hover' },
+  prefetch: { prefetchAll: true, defaultStrategy: 'hover' },
 });
