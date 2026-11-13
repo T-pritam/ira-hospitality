@@ -324,29 +324,43 @@ function initReveals() {
 /* ------------------------------------------------------------------ */
 function initHero() {
   const hero = document.querySelector<HTMLElement>('[data-hero]');
-  const fan = hero?.querySelector<HTMLElement>('[data-fan]');
-  if (!hero || !fan) return;
-  const cards = $$('.fan__card', fan);
-  const mid = (cards.length - 1) / 2;
-  gsap.fromTo(cards,
-    { rotation: (i) => (i - mid) * 7, rotationY: (i) => (i - mid) * -16, z: (i) => Math.abs(i - mid) * -90, xPercent: (i) => (i - mid) * -34, y: (i) => Math.abs(i - mid) * 26, transformOrigin: '50% 120%' },
-    {
-      rotation: 0, rotationY: 0, z: 0, xPercent: 0, y: (i) => (i % 2 ? 36 : 0), ease: 'none',
-      scrollTrigger: { trigger: hero, start: 'top top', end: () => `+=${Math.max(320, fan.offsetTop + fan.offsetHeight * 0.4 - window.innerHeight * 0.45)}`, scrub: 0.7, invalidateOnRefresh: true },
-    });
-  // The whole hand leans gently towards the pointer
-  if (finePointer) {
-    gsap.set(fan, { transformPerspective: 1400, transformStyle: 'preserve-3d' });
-    const ry = gsap.quickTo(fan, 'rotationY', { duration: 1.2, ease: 'power3.out' });
-    const rx = gsap.quickTo(fan, 'rotationX', { duration: 1.2, ease: 'power3.out' });
-    hero.addEventListener('pointermove', (e) => {
-      ry((e.clientX / window.innerWidth - 0.5) * 9);
-      rx((e.clientY / window.innerHeight - 0.5) * -6);
-    });
-    hero.addEventListener('pointerleave', () => { ry(0); rx(0); });
-  }
+  const ring = hero?.querySelector<HTMLElement>('[data-ring]');
+  const spin = ring?.querySelector<HTMLElement>('.ring__spin');
+  if (!hero || !ring || !spin) return;
+
+  // The ring turns on its own, coasts after a drag, and picks up speed with the scroll.
+  let angle = 0;
+  let vel = 0.55;            // degrees per frame; a short opening glide that settles into the idle turn
+  let dragging = false, lastX = 0, moved = 0, active = true;
+  const IDLE = 0.05;
+  ScrollTrigger.create({ trigger: hero, start: 'top bottom', end: 'bottom top', onToggle: (self) => { active = self.isActive; } });
+  gsap.ticker.add(() => {
+    if (!active) return;
+    if (!dragging) {
+      vel += (IDLE - vel) * 0.035;
+      angle += vel + (lenis?.velocity ?? 0) * 0.02;
+    }
+    spin.style.rotate = `y ${angle.toFixed(3)}deg`;
+  });
+  ring.addEventListener('pointerdown', (e) => { dragging = true; lastX = e.clientX; moved = 0; });
+  window.addEventListener('pointermove', (e) => {
+    if (!dragging) return;
+    const dx = e.clientX - lastX; lastX = e.clientX;
+    moved += Math.abs(dx);
+    const d = dx * (window.innerWidth < 720 ? 0.32 : 0.16);
+    angle -= d; vel = -d;   // seen from inside, the wall follows the hand
+  }, { passive: true });
+  const release = () => { dragging = false; };
+  window.addEventListener('pointerup', release);
+  window.addEventListener('pointercancel', release);
+  // A drag is not a click
+  ring.addEventListener('click', (e) => { if (moved > 8) { e.preventDefault(); e.stopPropagation(); } }, true);
+  ring.addEventListener('dragstart', (e) => e.preventDefault());
+
+  // Leaving the hero: the ring tips back and the words ease away
+  gsap.to(ring, { rotationX: 14, scale: 0.9, yPercent: -4, transformPerspective: 1400, ease: 'none', scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: true } });
   gsap.to(hero.querySelector('.hero__inner'), {
-    yPercent: -6, opacity: 0.35, scale: 0.97, ease: 'none',
+    yPercent: -6, opacity: 0.3, scale: 0.97, ease: 'none',
     scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom 35%', scrub: true },
   });
 }
@@ -451,9 +465,9 @@ function intro() {
   // The hand-drawn stroke under the last word draws itself
   const stroke = document.querySelector('.mark path');
   if (stroke) tl.to(stroke, { strokeDashoffset: 0, duration: 1.1, ease: 'power2.inOut' }, 'heroIn+=0.95');
-  // Home: the work cards are dealt in from the middle outwards
-  const dealt = $$('[data-fan] .fan__card picture');
-  if (dealt.length) tl.from(dealt, { yPercent: 105, scale: 1.25, duration: 1.4, ease: 'expo.out', stagger: { each: 0.09, from: 'center' }, clearProps: 'transform' }, 'heroIn+=0.3');
+  // Home: the ring of work rises into place while it spins down
+  const ringEl = document.querySelector('[data-ring]');
+  if (ringEl) tl.from(ringEl, { yPercent: 28, scale: 0.8, duration: 1.8, ease: 'expo.out' }, 'heroIn+=0.25');
   tl.from('[data-header]', { yPercent: -130, duration: 1.1, ease: 'expo.out', clearProps: 'transform' }, 'heroIn+=0.1');
 }
 
@@ -471,6 +485,7 @@ async function boot() {
     ScrollTrigger.sort();
     ScrollTrigger.refresh();
   }
+  if (document.querySelector('[data-threads]')) import('./threads').then((m) => m.initThreads(motion));
   root.classList.add('motion-ready');
 
   // Feature modules load only on pages that use them

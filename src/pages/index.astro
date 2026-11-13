@@ -16,21 +16,31 @@ const reelProjects = projects.filter((p) => p.cover);
 const half = Math.ceil(clientNames.length / 2);
 const clientRows = [clientNames.slice(0, half), clientNames.slice(half)];
 
-// Five pieces of client work, fanned out under the headline. Each links to its project.
-const fan = [
+// Client work arranged around a slowly turning ring. Each card links to its project.
+const ring = [
+  { src: 'indian-durbar-16.jpg', slug: 'indian-durbar', name: 'Indian Durbar' },
   { src: 'dessert-kart-4.jpg', slug: 'dessert-kart', name: 'Dessert Kart' },
   { src: 'og-green-5.jpg', slug: 'og-green', name: 'OG Green' },
-  { src: 'indian-durbar-16.jpg', slug: 'indian-durbar', name: 'Indian Durbar' },
-  { src: 'say-cheese-pi7-image-tool-1.jpg', slug: 'say-cheese', name: 'Say Cheese' },
   { src: 'unamas-thumbnail.jpg', slug: 'unamas', name: 'Unamas' },
+  { src: 'iris-trident-pune-1.jpg', slug: 'iris-trident-pune', name: 'Iris, Trident Pune' },
+  { src: 'say-cheese-pi7-image-tool-1.jpg', slug: 'say-cheese', name: 'Say Cheese' },
+  { src: 'nest-wall.jpg', slug: 'nest', name: 'Nest' },
+  { src: 'baked-daily-thumbnail.jpg', slug: 'baked-daily', name: 'Baked Daily' },
+  { src: 'indian-durbar-1.jpg', slug: 'indian-durbar', name: 'Indian Durbar' },
+  { src: 'dessert-kart-1.jpg', slug: 'dessert-kart', name: 'Dessert Kart' },
+  { src: 'og-green-1.jpg', slug: 'og-green', name: 'OG Green' },
+  { src: 'unamas-17.jpg', slug: 'unamas', name: 'Unamas' },
+  { src: 'iris-trident-pune-2.jpg', slug: 'iris-trident-pune', name: 'Iris, Trident Pune' },
+  { src: 'say-cheese-pi7-image-tool.jpg', slug: 'say-cheese', name: 'Say Cheese' },
 ];
 // The studio's real coordinates, set like a masthead detail
 const coords = `${site.geo.lat.toFixed(4)}° N, ${site.geo.lng.toFixed(4)}° E`;
 ---
-<Base headerTheme="light" preloader footerCta={false}>
+<Base headerTheme="dark" preloader footerCta={false}>
   <!-- 1 · Hero -->
-  <section class="hero" data-theme-section="light" data-hero aria-labelledby="hero-title">
-    <div class="aurora" aria-hidden="true" data-aurora><i></i><i></i><i></i></div>
+  <section class="hero theme-dark" data-theme-section="dark" data-hero aria-labelledby="hero-title">
+    <canvas class="hero__threads" data-threads aria-hidden="true"></canvas>
+    <div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
     <div class="container hero__inner">
       <p class="hero__mast" data-intro>
         <span>Headquartered in Hyderabad, India</span>
@@ -42,26 +52,28 @@ const coords = `${site.geo.lat.toFixed(4)}° N, ${site.geo.lng.toFixed(4)}° E`;
         <span class="hero__line hero__line--in">Built <span class="light">for the <span class="mark">Brand.<svg viewBox="0 0 300 14" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M3 9.5C38 3.5 71 11 112 6.5S188 2.5 229 7c26 2.8 47 3.4 68 .5" /></svg></span></span></span>
       </h1>
       <div class="hero__foot">
-        <span class="hero__hint" data-intro aria-hidden="true">Scroll<i></i></span>
+        <span class="hero__hint" data-intro aria-hidden="true">Drag or scroll<i></i></span>
         <div class="hero__lede" data-intro>
           <p class="hero__copy">
             We position hospitality brands for impact through storytelling, strategy and soul. Every element, from identity to experience, is curated to inspire loyalty and elevate perception.
           </p>
           <div class="hero__actions">
             <Button href="/services/">What we do</Button>
-            <a href="/contact/" class="link-arrow">Let’s build your brand <Icon name="arrow-right" /></a>
+            <Button href="/contact/" variant="ghost">Let’s build your brand</Button>
           </div>
         </div>
       </div>
     </div>
     <div class="hero__stage" data-intro>
-      <div class="fan" data-fan>
-        {fan.map((f, i) => (
-          <a class="fan__card" href={`/projects/${f.slug}/`} data-cursor="View" aria-label={`${f.name}: view project`}>
-            <Picture src={img(f.src)} alt="" widths={[280, 420, 560]} sizes="(min-width: 800px) 18vw, 35vw" formats={['avif', 'webp']} loading="eager" fetchpriority={i === 2 ? 'high' : undefined} />
-            <span class="fan__cap" aria-hidden="true">{f.name}</span>
-          </a>
-        ))}
+      <div class="ring" data-ring style={`--n:${ring.length}`}>
+        <div class="ring__spin">
+          {ring.map((f, i) => (
+            <a class="ring__card" style={`--i:${i}`} href={`/projects/${f.slug}/`} data-cursor="View" aria-label={`${f.name}: view project`} draggable="false">
+              <Picture src={img(f.src)} alt="" widths={[240, 360, 520]} sizes="(min-width: 800px) 17vw, 42vw" formats={['avif', 'webp']} loading={i < 3 || i > ring.length - 3 ? 'eager' : 'lazy'} fetchpriority={i === 0 ? 'high' : undefined} draggable="false" />
+              <span class="ring__cap" aria-hidden="true">{f.name}</span>
+            </a>
+          ))}
+        </div>
       </div>
       <nav class="hero__dock glass" aria-label="Services">
         {services.map((s) => <a href={`/services/${s.slug}/`}>{s.name}</a>)}
