@@ -115,21 +115,21 @@ const coords = `${site.geo.lat.toFixed(4)}° N, ${site.geo.lng.toFixed(4)}° E`;
         <p data-reveal>Helping hotels and restaurants speak with clarity, creativity and purpose.</p>
         <div data-reveal><a href="/services/" class="link-arrow">What we do <Icon name="arrow-right" /></a></div>
       </div>
-      <div class="svc-bento" data-bento>
+      <ul class="svc-index" role="list" data-rows>
         {services.map((s, i) => (
-          <a href={`/services/${s.slug}/`} class="svc-card glass" data-glow data-tilt>
-            <div class="svc-card__top">
-              <span class="svc-card__num" aria-hidden="true">0{i + 1}</span>
+          <li>
+            <a href={`/services/${s.slug}/`} class="svc-line" data-glow>
+              <span class="svc-line__num" aria-hidden="true">0{i + 1}</span>
+              <h3 class="svc-line__title">{s.titleBold}{s.titleLight && <> <span class="light">{s.titleLight}</span></>}</h3>
+              <div class="svc-line__body">
+                <p>{s.short}</p>
+                <ul class="svc-line__tags" role="list">{s.highlights.slice(0, 3).map((h) => <li>{h}</li>)}</ul>
+              </div>
               <span class="round-arrow" aria-hidden="true"><Icon name="arrow-right" /></span>
-            </div>
-            <div>
-              <h3 class="svc-card__title">{s.titleBold}{s.titleLight && <> <span class="light">{s.titleLight}</span></>}</h3>
-              <p class="svc-card__text">{s.short}</p>
-              <ul class="svc-card__tags" role="list">{s.highlights.slice(0, 3).map((h) => <li class="chip">{h}</li>)}</ul>
-            </div>
-          </a>
+            </a>
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   </section>
 
