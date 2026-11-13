@@ -15,12 +15,14 @@ const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWi
       <Image src={logoGold} alt="" width={228} height={140} format="webp" loading="eager" fetchpriority="high" />
     </a>
 
-    <nav class="nav-desktop" aria-label="Main">
+    <nav class="nav-desktop" aria-label="Main" data-nav>
+      <span class="nav-pill" aria-hidden="true"></span>
       {mainNav.map((l) => (
         <a href={l.href} aria-current={isCurrent(l.href) ? 'page' : undefined}>{l.label}</a>
       ))}
     </nav>
 
+    <span class="site-header__progress" aria-hidden="true"><i data-progress></i></span>
     <div class="header-actions">
       <div class="header-cta"><Button href="/contact/">Let’s talk</Button></div>
       <button class="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="site-menu" data-burger>

@@ -10,13 +10,42 @@ export function init(motion: boolean, lenis: Lenis | null) {
   const bar = section?.querySelector<HTMLElement>('.reel__progress span');
   if (!section || !track || !motion) return;
 
+  // The dark tile opens up as it arrives
+  const radius = getComputedStyle(section).borderTopLeftRadius || '0px';
+  gsap.fromTo(section, { clipPath: `inset(9% 6% 0% 6% round 3.5rem)` }, {
+    clipPath: `inset(0% 0% 0% 0% round ${radius})`, ease: 'none',
+    scrollTrigger: { trigger: section, start: 'top bottom', end: 'top 25%', scrub: 0.4 },
+  });
+
+
   const mm = gsap.matchMedia();
   mm.add('(min-width: 900px)', () => {
     section.classList.add('is-pinned');
     const distance = () => Math.max(0, track.scrollWidth - section.clientWidth);
+    // Cards turn slightly towards the centre of the screen, like a carousel seen from inside
+    const items = Array.from(track.querySelectorAll<HTMLElement>('.reel__item'));
+    const index = section.querySelector<HTMLElement>('[data-reel-index]');
+    gsap.set(items, { transformPerspective: 1200 });
+    const shape = () => {
+      const vw = window.innerWidth;
+      items.forEach((item) => {
+        const r = item.getBoundingClientRect();
+        const d = (r.left + r.width / 2 - vw / 2) / vw;
+        const c = Math.max(-1, Math.min(1, d));
+        gsap.set(item, { rotationY: c * -16, scale: 1 - Math.abs(c) * 0.07 });
+      });
+    };
+
     const tween = gsap.to(track, {
       x: () => -distance(),
       ease: 'none',
+      // Driven by the tween (not the trigger) so the counter and bar match what is on screen
+      onUpdate() {
+        const pr = this.progress();
+        if (bar) bar.style.transform = `scaleX(${pr})`;
+        if (index) index.textContent = String(Math.round(pr * (items.length - 1)) + 1).padStart(2, '0');
+        shape();
+      },
       scrollTrigger: {
         trigger: section,
         start: 'top top',
@@ -24,7 +53,6 @@ export function init(motion: boolean, lenis: Lenis | null) {
         pin: true,
         scrub: 0.8,
         invalidateOnRefresh: true,
-        onUpdate: (self) => { if (bar) bar.style.transform = `scaleX(${self.progress})`; },
       },
     });
 
@@ -47,10 +75,13 @@ export function init(motion: boolean, lenis: Lenis | null) {
       if (lenis) lenis.scrollTo(y, { immediate: true }); else window.scrollTo(0, y);
     };
     track.addEventListener('focusin', onFocus);
+    ScrollTrigger.sort();
     ScrollTrigger.refresh();
+    shape();
 
     return () => {
       section.classList.remove('is-pinned');
+      gsap.set(items, { clearProps: 'transform' });
       track.removeEventListener('focusin', onFocus);
     };
   });

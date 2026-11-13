@@ -18,7 +18,7 @@ node scripts/prep-assets.mjs     # regenerate trimmed logos, favicons, og-image 
 Requires Node 18.20+. On npm 11, install scripts are blocked by default, but sharp and esbuild still work without them.
 
 ## Stack
-Astro 5 (static output, `format: 'directory'`, `site: https://www.irahospitality.co.in`), GSAP 3.13 (ScrollTrigger + SplitText, free plugins in the `gsap` package), Lenis 1.3, self-hosted Inter Variable (`@fontsource-variable/inter`), `@astrojs/sitemap`, and sharp for AVIF/WebP. There is no CSS framework: plain CSS with tokens.
+Astro 5 (static output, `format: 'directory'`, `site: https://www.irahospitality.co.in`), GSAP 3.13 (ScrollTrigger + SplitText, free plugins in the `gsap` package), Lenis 1.3, self-hosted Inter Variable (`@fontsource-variable/inter`) plus Instrument Serif italic (`@fontsource/instrument-serif`), `@astrojs/sitemap`, and sharp for AVIF/WebP. There is no CSS framework: plain CSS with tokens.
 
 ## Layout
 ```
@@ -27,18 +27,22 @@ src/pages/       index, about, contact, blogs, blog/ (post via ?slug=), projects
 src/components/  Header (floating glass bar + frosted mobile menu), Footer, SEO (meta, OG, JSON-LD), PageHero, CtaBand, ProjectCard, FounderCard, ContactForm, Button, Icon (inline SVG set)
 src/layouts/Base.astro   head, preloader (home only, once per session), header/footer, back-to-top
 src/styles/global.css    ALL styles + design tokens (:root)
-src/scripts/main.ts      Lenis, header theme switching, menu, reveal system, hero card fan, pointer effects, intro timeline, lazy-loads feature modules
+src/scripts/main.ts      Lenis, header theme switching, menu, reveal system, hero ring, pointer effects, intro timeline, lazy-loads feature modules
+src/scripts/threads.ts   canvas threads of light behind the home hero
 src/scripts/modules/     reel (pinned horizontal work reel), voices (testimonial tabs), accordion, forms, map
 docs/            handoff notes + source pack of the old site
 ```
 
 ## Design direction (v2, do not drift back)
 The old site is the source for **content and page flow only**. Its look (black canvas, wireframe dodecahedrons, hairlines, vertical rail label, circular "scroll down" badge, uppercase tracked labels, orange pill with a black disc) was deliberately dropped at the agency's request. Do not reintroduce it.
-- **Canvas:** clear and light. Paper `#fbfbfd`, white, soft grey `#f5f5f7`, ink `#1d1d1f`. At most one dark "tile" per page (`.theme-dark.tile`).
+- **It must not look templated.** Avoid the generic patterns: a centred hero with a pill badge, twin buttons and gradient blobs; glossy gradient buttons with glows; sparkle icons; every section head centred; oversized radii. Prefer editorial, asymmetric layouts and real, specific details (project names, the studio's coordinates).
+- **Canvas:** clear, light and slightly warm. Paper `#faf8f4`, white, soft `#f3f0ea`, ink `#1c1b19`. Dark is used as rounded "tiles" on the light page: the home hero and the work reel on the home page, at most one elsewhere.
 - **Glass:** frosted surfaces (`.glass`, `.glass-dark`, the floating header bar, `.form-card`) sit over soft warm light (`.aurora` with three `<i>` blobs). Keep backdrop-filter use to a handful of elements per screen.
-- **Accents:** orange `#ff6900` for primary buttons and small highlights, `--orange-text` `#c2410c` when orange is used as text on light, logo gold `#beaa8f`. All tokens are in `global.css` `:root`.
-- **Type:** Inter only, weight 600 headlines with tight tracking, sentence case (no uppercase labels). Two-tone headlines: the emphasised words stay in ink and the `.light` words step back to grey.
-- **Shape:** large radii (`--radius-lg`), pill buttons, rounded tiles, generous space, centred section heads (`.section-head`).
+- **Accents:** primary buttons are flat orange `#ff6900` with dark text (no gradients or glows) and invert on hover; orange is also used for small highlights (the hand-drawn stroke, links, progress line), `--orange-text` `#c2410c` when orange is used as text on light, logo gold `#beaa8f`. All tokens are in `global.css` `:root`.
+- **Type:** two voices. Inter (weight 560, tight tracking) for the emphasised words; the `.light` words, eyebrows, numerals and pull quotes answer in Instrument Serif italic (`--serif`). Sentence case, no uppercase labels.
+- **Shape:** moderate radii (`--radius-lg` tops out at 1.5rem), pill buttons, generous space. Section heads (`.section-head`) are left-aligned and split: heading left, supporting text right.
+- **Home hero:** a dark rounded tile filling the first screen. Behind the text, `threads.ts` draws slow threads of gold light on a canvas. Masthead line with a rule, a staggered two-line headline with a hand-drawn orange stroke under the last word (`.mark`), lede and buttons to the right, then the **ring**: 14 captioned, linked project cards set around a cylinder and seen from inside, so the work wraps the full width at any screen size. It turns slowly, can be dragged, and speeds up with scroll (`initHero` in `main.ts`).
+- **Header glass:** champagne-tinted on light sections and amber smoked glass on dark ones, so it never reads as a plain white bar.
 - One idea per screen, calm motion.
 
 ## Content rules (strict)
@@ -58,7 +62,14 @@ The old site is the source for **content and page flow only**. Its look (black c
   - `data-parallax` (image drift inside its frame; give the img the `parallax-img` class)
   - `data-words` (word opacity scrubbed by scroll)
   - `data-aurora` (background light drifts with scroll), `data-bento` (children rise in a stagger), `data-glow` (pointer-following highlight), `data-count` (number counts up), `data-drift`
-  - `data-hero` + `data-fan` (home hero: the hand of work cards fans out as you scroll)
+  - `data-hero` + `data-ring` (home hero: the rotating ring of work; rotate it with the `rotate` property, not a CSS variable, to keep per-frame cost low), `data-threads` (hero canvas)
+  - `data-pin` around a `data-words` statement (the statement pins mid-screen while it lights up; put a `.orb` inside for the glow)
+  - `data-chars` (large display line, letters rise out of a mask), `data-tilt` (tile leans towards the pointer), `data-cursor="View"` (pointer bubble with that label), `data-marquee` (rows drift and speed up with scroll velocity; each `.marquee__track` holds 4 copies and a `data-dir`)
+- Pinned scenes shift everything below them. After creating triggers, `main.ts` and `reel.ts` call `ScrollTrigger.sort()` then `refresh()`; keep that when adding a pin.
+- The header bar is "liquid glass": a gradient rim (`::before`), a highlight that travels with scroll and pointer (`--sheen`), and it condenses once scrolled. It must reappear the moment the page scrolls up (see `onScroll` in `main.ts`); keep its transform transition short.
+- Keep the first paint fast: the intro waits at most 350 ms for fonts, the preloader runs about a second, and all links prefetch on hover (`prefetchAll`).
+- `data-zoom` (gallery image settles into its frame), `data-hero-fade` (inner-page hero eases back on scroll).
+- Internal links fade the page out before navigating (`html.is-leaving`); the header nav pill and scroll progress line are driven from `main.ts`.
 - Do not put a CSS `transition` on `transform` for anything GSAP animates (it makes scrubbing lag).
 - `data-theme-section="dark|light"` on each section tells the fixed header which colour to use.
 - SplitText must keep `aria: 'none'` (otherwise it adds `aria-label` to `<p>`/`<h*>`, which fails Lighthouse).

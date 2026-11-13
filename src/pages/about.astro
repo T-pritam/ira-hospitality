@@ -29,9 +29,12 @@ const pillars = [
   <section class="section theme-light" data-theme-section="light" aria-labelledby="about-title">
     <div class="container">
       <h2 class="sr-only" id="about-title">About Us</h2>
-      <p class="studio__statement" data-words>
+      <div class="pin-scene" data-pin>
+        <span class="orb" aria-hidden="true"></span>
+        <p class="studio__statement" data-words>
         We specialise in <strong>curating extraordinary hospitality experiences</strong> and <strong>bespoke solutions</strong> that turn <strong>hotels, restaurants and lifestyle spaces</strong> into profitable, guest-centric destinations.
-      </p>
+        </p>
+      </div>
       <div class="studio__grid">
         <div class="media studio__media" data-clip>
           <Picture src={img('indian-durbar-16.jpg')} alt="Hands holding the Indian Durbar menu, a project by Ira Hospitality" widths={[480, 800]} sizes="(min-width: 900px) 45vw, 92vw" formats={['avif', 'webp']} class="parallax-img" data-parallax />
@@ -50,7 +53,7 @@ const pillars = [
       <div class="section-head"><h2 class="h2" id="why-title" data-split>Why Choose <span class="light">Us?</span></h2></div>
       <div class="pillars" data-bento>
         {pillars.map((p, i) => (
-          <div class="pillar glass">
+          <div class="pillar glass" data-glow data-tilt>
             <span class="pillar__num">0{i + 1}</span>
             <h3>{p.title}</h3>
             <p>{p.text}</p>
